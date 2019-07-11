@@ -12,12 +12,6 @@ module.exports = {
     app: './client/App.js', 
     javascript: './client/scripts/index.js'
   },
-  devServer: {
-    contentBase: './dist',
-    hot: true,
-    host: 'localhost',
-    open: true
-  },
   module: {
     rules: [
       {
