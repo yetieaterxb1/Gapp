@@ -1,12 +1,10 @@
 const path = require('path')
-const webpack = require('webpack')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const WebpackPwaManifest = require('webpack-pwa-manifest')
 const { GenerateSW } = require('workbox-webpack-plugin')
-
 
 module.exports = {
   name: 'client',

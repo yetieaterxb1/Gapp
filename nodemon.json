@@ -9,5 +9,5 @@
   ],
   "ext": "js, css, html",
   "ignore": [".git", "node_modules/**/node_modules", "client/"],
-  "exec": "npm run build:dev && npm run start"
+  "exec": "npm run start"
 }

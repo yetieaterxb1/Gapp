@@ -1,9 +1,10 @@
 const User = require('../models/User')
 
 function isAuthenticated(req, res, next) {
-  return req.isAuthenticated() ?
-    next() :
-    res.redirect('/login');
+  // return req.isAuthenticated() ?
+  //   next() :
+  //   res.redirect('/login');
+  // next()
 }
 
 function login(req, res, next){
@@ -11,7 +12,7 @@ function login(req, res, next){
     username: req.body.username,
     password: req.body.password
   }
-  req.login(userCreds)
+  // req.login(userCreds)
 }
 
 function logout(req, res, next){
@@ -30,11 +31,11 @@ function signup(req,res,next){
     if(!user){
       var user = new User(userCreds)
       user.save()
-      req.login(userCreds, function(err){
-        if (err) { return next(err); }
-        console.log('Is authed ' + req.isAuthenticated())
-        res.status(200).json({message: 'Signup successful'})
-      })
+      // req.login(userCreds, function(err){
+      //   if (err) { return next(err); }
+      //   console.log('Is authed ' + req.isAuthenticated())
+      //   res.status(200).json({message: 'Signup successful'})
+      // })
     }
   })
 }

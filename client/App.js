@@ -1,30 +1,30 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { 
-  BrowserRouter as Router, 
-  Route, 
-  Switch, 
-  // Link 
-} from "react-router-dom";
+import { HashRouter, Route } from "react-router-dom";
 
-import Splash from './components/Splash'
-import Login from './components/Login'
-import Home from './components/Home'
+import Splash from './components/Splash/Splash'
+import Login from './components/Login/Login'
+import Home from './components/User/Home'
+
 // import Navigation from './components/Navbar'
+
+
+
+{/*
+<Button to="/somewhere" renderAs={Link}>My button linked to react-router-dom</Button> 
+*/}
  
 class App extends Component {
   render() {
+    {/*https://stackoverflow.com/questions/27928372/react-router-urls-dont-work-when-refreshing-or-writing-manually*/}
     return (
-      <>
-      <p>HELO!</p>
-      <Router>
-        <Switch>
-          <Route exact path='/' component={Splash}/>
-          <Route exact path='/login' component={Login}/>
-          <Route exact path='/home' component={Home}/>
-        </Switch>
-      </Router>
-      </>
+      <HashRouter basename='/'>
+          <>
+            <Route exact path='/' component={Splash}/>
+            <Route path='/login' component={Login}/>
+            <Route path='/usr/home' component={Home}/>
+          </>
+      </HashRouter>
     )
   }
 }

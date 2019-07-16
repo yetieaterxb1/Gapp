@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
 
 const NODE_ENV = process.env.NODE_ENV
+const DEV_ENV = process.env.DEV_ENV
 
 
 const server = require('./config/webpack.server')
@@ -10,7 +11,7 @@ const client = NODE_ENV == 'production' ?
   require('./config/webpack.client') :
   require('./config/webpack.client.dev')
 
-if(NODE_ENV != 'production'){
+if(DEV_ENV == 'true'){
   const config = client
   const options = {
     contentBase: './dist',

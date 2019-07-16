@@ -7,7 +7,9 @@ const isAuthenticated = require('../controllers/auth.js').isAuthenticated
 const router = express.Router()
 
 router.route('/login')
-  .get((req,res,next)=>{next()})
+  .get((req,res,next)=>{
+    console.log('LOGINNNNNNN')
+  })
   .post(login)
 
 router.route('/logout')

@@ -3,7 +3,6 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 
-
 module.exports = {
   name: 'client',
   mode: 'development',
@@ -50,5 +49,5 @@ module.exports = {
   output: {
     path: path.join(process.cwd(), '/dist/public'),
     filename: '[name].js',
-  },
+  }
 }

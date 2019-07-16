@@ -1,7 +1,6 @@
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
 
-
 module.exports = {
   name: 'server',
   mode: 'production',
