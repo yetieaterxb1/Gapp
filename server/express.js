@@ -46,6 +46,7 @@ passport.deserializeUser((id, done) => {
 app.use(passport.initialize());
 app.use(passport.session());
 glob.sync('./api/passport/*.js').forEach( Strategy => {
+  console.log('Strategy')
   passport.use(new Strategy())
 })
 

@@ -1,4 +1,4 @@
-# Getting started
+# Getting started (DEPRECATED)
 
 The directions below describe all steps needed to install and run the app.
 

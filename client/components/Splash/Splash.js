@@ -7,7 +7,7 @@ class Splash extends Component {
   render() {
     return (
       <div>
-        <h1> Splash/landing page HOOOOOOOOOT </h1>
+        <h1> Splash/landing page </h1>
         <Link to="/login">
           <Button variant="contained" to="/login">
             Link

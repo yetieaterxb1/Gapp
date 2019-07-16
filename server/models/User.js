@@ -1,9 +1,8 @@
-//https://github.com/shamahoque/mern-social/blob/master/server/models/user.model.js
-const SALT_ROUNDS = 5
-
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+
+const SALT_ROUNDS = 5
 
 const UserSchema = new Schema({
   username: {
@@ -11,7 +10,7 @@ const UserSchema = new Schema({
     trim: true,
     required: 'Name is required'
   },
-  password: {
+  password_hash: {
     type: String,
     required: "Password is required"
   },
@@ -38,28 +37,27 @@ const UserSchema = new Schema({
   }
 })
 
-// UserSchema
-//   .virtual('password') // Must change password to hashed_password in the schema
-//   .set(function(password) {
-//     this.password = this.encryptPassword(password)
-//   })
-//   // .get(function() {
-//   //   return this.password
-//   // })
+UserSchema
+  .virtual('password')
+  .set(function(password) {
+    this.password_hash = this.encryptPassword(password)
+  })
+  .get(function(password) {
+    return this.password_hash
+  })
 
-// UserSchema.methods = {
-//   authenticate: function(plainText) {
-//     // return this.encryptPassword(plainText) === this.hashed_password
-//     bcrypt.compare(plainText, this.password)
-//   },
-//   encryptPassword: function(password) {
-//     if (!password) return ''
-//     try {
-//       return bcrypt.hashSync(password, SALT_ROUNDS)
-//     } catch (err) {
-//       return 'Error:' + err
-//     }
-//   }
-// }
+UserSchema.methods = {
+  authenticate: function(hash) {
+    return bcrypt.compareSync(hash, this.password)
+  },
+  encryptPassword: function(password) {
+    if (!password) return ''
+    try {
+      return bcrypt.hashSync(password, SALT_ROUNDS)
+    } catch (err) {
+      return 'Error:' + err
+    }
+  }
+}
 
 module.exports = mongoose.model('User', UserSchema)
