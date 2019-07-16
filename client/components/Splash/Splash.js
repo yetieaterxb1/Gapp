@@ -8,7 +8,7 @@ class Splash extends Component {
     return (
       <div>
         <h1> Splash/landing page HOOOOOOOOOT </h1>
-        <Link to="/login" router>
+        <Link to="/login">
           <Button variant="contained" to="/login">
             Link
           </Button>
