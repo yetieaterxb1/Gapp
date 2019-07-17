@@ -1,15 +1,12 @@
-
-console.log('LOGIN REDUCER RUNNING')
-
 const INIT_STATE = {
   credentials:{
     username: 'admin',
     password: 'password',
   },
   isAuthenticated: false,
-  message: false
+  message: false,
+  isLoading: false
 }
-
 
 const loginReducer = (state=INIT_STATE, action) => {
   switch (action.type) {
@@ -23,16 +20,26 @@ const loginReducer = (state=INIT_STATE, action) => {
       return Object.assign({}, state, { isLoading: true })
     }
     case 'LOGIN_SUCCESS':{
-      console.log('Reducer: action: ', action.type)
-      const isAuthenticated = action.isAuthenticated
       const message = action.message
       return Object.assign({}, state, { isAuthenticated: true, isLoading: false, message: message })
     }
     case 'LOGIN_FAIL':{
-      console.log('Reducer: action: ', action.type)
-      console.log('Reducer: state: ', state)
       const message = action.message
-      return Object.assign({}, state, { isAuthenticated: false, isLoading:false, message: message}) 
+      return Object.assign({}, state, { isAuthenticated: false, isLoading:false, message: message }) 
+    }
+    case 'SUBMIT_LOGOUT':{
+      console.log('SUBMIT_LOGOUT')
+      return Object.assign({}, state, { isAuthenticated: false, isLoading:true })
+    }
+    case 'LOGOUT_SUCCESS':{
+      const message = action.message
+      console.log('LOGOUT_SUCCESS')
+      return Object.assign({}, state, { isAuthenticated: false, isLoading:false, message: message })
+    }
+    case 'LOGOUT_FAIL':{
+      console.log('LOGOUT_FAIL')
+      const message = action.message
+      return Object.assign({}, state, { isAuthenticated: true, isLoading:false, message: message }) 
     }
     case 'IS_AUTHED':{
       console.log('Is Authed: ', state.isAuthenticated)

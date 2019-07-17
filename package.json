@@ -22,9 +22,11 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "helmet": "^3.16.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.19",
     "morgan": "^1.9.1",
     "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
     "randomstring": "^1.1.5",
     "uid-safe": "^2.1.5"
   },

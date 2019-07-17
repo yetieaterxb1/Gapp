@@ -8,11 +8,13 @@ const UserSchema = new Schema({
   username: {
     type: String,
     trim: true,
-    required: 'Name is required'
+    unique: true,
+    dropDups: true,
+    required: true
   },
   password_hash: {
     type: String,
-    required: "Password is required"
+    required: true
   },
   email: {
     type: String,

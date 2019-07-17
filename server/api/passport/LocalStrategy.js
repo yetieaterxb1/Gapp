@@ -22,7 +22,6 @@ module.exports = LocalStrategy(function(username, password, done){
         })
       }).then(function(err, q){
         if(!err && q){
-          console.log('Local then...' + q)
           return(done(null, user))
         }else{
           return(done(null, false, {message: 'Wrong credentials:: ' + err}))

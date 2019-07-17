@@ -8,6 +8,10 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 
+import { connect } from 'react-redux'
+
+import loginActionCreator from '../../store/actions/login.js'
+
 const styles = {
   root: {
     flexGrow: 1,
@@ -21,6 +25,8 @@ const styles = {
   },
 };
 
+
+
 function ButtonAppBar(props) {
   const { classes } = props;
   return (
@@ -33,7 +39,7 @@ function ButtonAppBar(props) {
           <Typography variant="h6" color="inherit" className={classes.grow}>
             Username
           </Typography>
-          <Button color="inherit">Logout</Button>
+          <Button color="inherit" onClick={props.submitLogout}>Logout</Button>
         </Toolbar>
       </AppBar>
     </div>
@@ -44,4 +50,29 @@ ButtonAppBar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ButtonAppBar);
+
+// const mapStateToProps = (state, ownProps) => {
+//   return {
+//     classes: ownProps.classes,
+//     credentials: state.login.credentials,
+//     open: state.login.open,
+//     isAuthenticated: state.login.isAuthenticated,
+//     message: state.login.isAuthenticated,
+//     isLoading: state.login.isLoading
+//   }
+// }
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    submitLogout: (credentials) => {      
+      dispatch(loginActionCreator.submitLogout())
+    }
+  }
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)( withStyles(styles)(ButtonAppBar) )
+
+// export default withStyles(styles)(ButtonAppBar)

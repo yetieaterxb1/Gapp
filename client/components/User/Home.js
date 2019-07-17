@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import Appbar from '../Common/Appbar'
 
-export default class Home extends Component {
+class Home extends Component {
   render() {
+    // console.log(this.props)
+    // console.log(this.state)
     return (
       <div>
         <Appbar/>
@@ -11,3 +13,5 @@ export default class Home extends Component {
     )
   }
 }
+
+export default Home

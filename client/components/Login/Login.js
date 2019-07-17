@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import Loader from '../Common/Loader'
 
-import loginActionCreator from '../../actions/login'
+import loginActionCreator from '../../store/actions/login.js'
 
 
 class Login extends Component {
@@ -59,14 +59,4 @@ export default connect(
   mapDispatchToProps
 )(Login)
 
-// export default Login
-
-// initState is a function which is runs before the server, and keeps consistency as thunk middleware
-// loginContainer.initState = (store, req, res) => {
-//   return (dispatch, getState) => {
-//     return new Promise( (resolve, reject)=> {
-//       resolve ()
-//     })
-//   }
-// }
 

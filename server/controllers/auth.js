@@ -1,12 +1,7 @@
 const User = require('../models/User')
 
-function redirectAuthenticated(req, res, next) {
-  return req.isAuthenticated() ?
-    res.redirect('/user'):
-    res.redirect('/login')
-}
-
 function login(req, res, next){
+  console.log('LOGIN', req.isAuthenticated())
   const userCreds = {
     username: req.body.username,
     password: req.body.password
@@ -15,13 +10,22 @@ function login(req, res, next){
     const isAuthed = req.isAuthenticated()
     if(err){ 
       next(err)
-    }else if(isAuthed){
-      res.status(200).json({
-        isAuthenticated: isAuthed,
-        message: 'Login successful.'
+    }else if(isAuthed){ 
+      req.signJWT(req.user, { expiresIn: 36000 })
+      .then(function(result){
+        const response = {
+          jwt: result,
+          isAuthenticated: isAuthed,
+          message: 'Login successful.'
+        }
+        if(result.error){
+          res.status(500).send(response) // User is logged in but cant be tokenized...?
+        }else{
+          res.status(200).send(response)
+        }
       })
     }else{
-      res.status(401).json({
+      res.status(401).send({
         isAuthenticated: isAuthed,
         message: 'Incorrect username or password.'
       })
@@ -30,14 +34,18 @@ function login(req, res, next){
 }
 
 function logout(req, res, next){
-  req.logout(function(err){
-    const isAuthed = req.isAuthenticated()
+  console.log('LOGOUT', req.isAuthenticated())
+  req.logout()
+  const isAuthed = req.isAuthenticated()
     if(err){
-      next(err)
+      console.error(err)
+      res.status(500).json({isAuthentiated: isAuthed, message: 'Logout NOT successful.'})
     }else if(!isAuthed){
-      res.status(200).json({message: 'Logout successful.'})
+      res.status(205).json({isAuthentiated: isAuthed, message: 'Logout successful.'})
+    }else{
+      res.status(205).json({isAuthentiated: isAuthed, message: 'Logout successful.'})
     }
-  })
+    console.log(req.isAuthenticated)
 }
 
 function signup(req,res,next){  
@@ -55,7 +63,7 @@ function signup(req,res,next){
       req.login(userCreds, function(err){
         if (err) { return next(err); }
         res.status(200).json({message: 'Signup successful'})
-      })
+      })  
     }else{
       res.status(200).json({message: 'That user already exists'})
     }
@@ -63,7 +71,6 @@ function signup(req,res,next){
 }
 
 module.exports = {
-  redirectAuthenticated,
   login,
   logout,
   signup

@@ -14,8 +14,9 @@ router.route('/login')
 
 router.route('/logout')
   .get(logout)
+  .post(logout)
 
 router.route('/signup')
   .post(signup)
 
-  module.exports = router
+module.exports = router
