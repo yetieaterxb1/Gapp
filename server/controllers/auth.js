@@ -1,9 +1,9 @@
 const User = require('../models/User')
 
-function isAuthenticated(req, res, next) {
+function redirectAuthenticated(req, res, next) {
   return req.isAuthenticated() ?
-    next() :
-    res.redirect('/login');
+    res.redirect('/user'):
+    res.redirect('/login')
 }
 
 function login(req, res, next){
@@ -16,8 +16,15 @@ function login(req, res, next){
     if(err){ 
       next(err)
     }else if(isAuthed){
-      res.status(200).json({message: 'Login successful.'})
-      next()
+      res.status(200).json({
+        isAuthenticated: isAuthed,
+        message: 'Login successful.'
+      })
+    }else{
+      res.status(401).json({
+        isAuthenticated: isAuthed,
+        message: 'Incorrect username or password.'
+      })
     }
   })
 }
@@ -56,7 +63,7 @@ function signup(req,res,next){
 }
 
 module.exports = {
-  isAuthenticated,
+  redirectAuthenticated,
   login,
   logout,
   signup

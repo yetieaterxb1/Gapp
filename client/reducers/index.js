@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux'
-import topics from './topic'
+import login  from './login'
 
 const reducer = combineReducers({
-  topics
+  login
 })
+
 
 export default reducer

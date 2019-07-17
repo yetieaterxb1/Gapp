@@ -1,0 +1,579 @@
+@import "bourbon";
+
+body {
+  background: black;
+  color: white;
+}
+.cube,.half1,.half2,.container {
+  @include transform-style( preserve-3d );
+}
+.container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin:150px auto 0;
+  @include perspective( 300px );
+}
+.cube {
+  width: 100px;
+  height: 100px;
+}
+.cube {
+  @include animation( cube 10.0s forwards infinite );
+  @include transform-origin( center 50px  );
+}
+.half1 {
+  height: 40px;
+  top: 0;
+  position: absolute;
+  @include animation( half-fold 10.0s forwards infinite );
+  @include transform-origin( 50% 100% );
+}
+.side {
+  width: 20px;
+  height: 20px;
+  background: white;
+  position: absolute;
+}
+.s1 {
+  top:0;
+  left: 40px;
+  @include transform-origin( 50% 100% );
+  @include animation( s1ani 10.0s forwards infinite );
+}
+.s2 {
+  top: 20px;
+  left: 40px;
+  @include transform-origin( 50% 0% );
+  @include animation( s2ani 10.0s forwards infinite );
+}
+.s3 {
+  top: 40px;
+  left: 40px;
+  @include transform-origin( 50% 0% );
+  @include animation( s3ani 10.0s forwards infinite );
+}
+.s4 {
+  top: 60px;
+  left: 40px;
+  @include transform-origin( 50% 0% );
+  @include animation( s4ani 10.0s forwards infinite );
+}
+.s5 {
+  left:20px;
+  top: 20px;
+  @include transform-origin( 100% 50% );
+  @include animation( s5ani 10.0s forwards infinite );
+}
+.s6 {
+  left:60px;
+  top: 40px;
+  @include transform-origin( 0% 50% );
+  @include animation( s6ani 10.0s forwards infinite );
+}
+
+@include keyframes( s1ani ) {
+  0% {
+    opacity: 1;
+    @include transform( translateY(0px) );
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  40% {
+    @include transform( rotateX(0deg) );
+  }
+  50% {
+    @include transform( rotateX(-90deg) );
+  }
+  60% {
+  }
+  70% {
+  }
+  80% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@include keyframes( s2ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  10% {
+    opacity: 1;
+    @include transform( rotateX(0deg) );
+  }
+  20% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@include keyframes( s3ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  10% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  20% {
+    opacity: 1;
+    @include transform( rotateX(0deg) );
+  }
+  30% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@include keyframes( s4ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  10% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  30% {
+    opacity: 1;
+    @include transform( rotateX(0deg) );
+  }
+  40% {
+    @include transform( rotateX(0deg) );
+  }
+  50% {
+    @include transform( rotateX(90deg) );
+    opacity: .5;
+  }
+  60% {
+    opacity: .5;
+  }
+  70% {
+    opacity: .5;
+  }
+  80% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@include keyframes( s5ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateY(-179deg) );
+  }
+  10% {
+    opacity: 0;
+    @include transform( rotateY(-179deg) );
+  }
+  20% {
+    opacity: 1;
+    @include transform( rotateY(0deg) );
+  }
+  30% {
+    opacity: 1;
+  }
+  40% {
+    @include transform( rotateY(0deg) );
+  }
+  50% {
+    @include transform( rotateY(90deg) );
+  }
+  60% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@include keyframes( s6ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateY(179deg) );
+  }
+  10% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+    @include transform( rotateY(179deg) );
+  }
+  30% {
+    opacity: 1;
+    @include transform( rotateY(0deg) );
+  }
+  40% {
+    @include transform( rotateY(0deg) );
+  }
+  50% {
+    @include transform( rotateY(-90deg) );
+  }
+  60% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+body {
+  background: black;
+  color: white;
+}
+.container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin:100px auto 0;
+  @include perspective( 300px );
+  @include transform-style( preserve-3d );
+}
+.cube {
+  @include transform-style( preserve-3d );
+}
+.side {
+  width: 20px;
+  height: 20px;
+  background: white;
+  position: absolute;
+}
+.s1 {
+  top:0;
+  left: 40px;
+  @include transform-origin( 50% 100% );
+  @include animation( s1ani 10.0s forwards infinite );
+}
+.s2 {
+  top: 20px;
+  left: 40px;
+  @include transform-origin( 50% 0% );
+  @include animation( s2ani 10.0s forwards infinite );
+}
+.s3 {
+  top: 40px;
+  left: 40px;
+  @include transform-origin( 50% 0% );
+  @include animation( s3ani 10.0s forwards infinite );
+}
+.s4 {
+  top: 60px;
+  left: 40px;
+  @include transform-origin( 50% 0% );
+  @include animation( s4ani 10.0s forwards infinite );
+}
+.s5 {
+  left:20px;
+  top: 20px;
+  @include transform-origin( 100% 50% );
+  @include animation( s5ani 10.0s forwards infinite );
+}
+.s6 {
+  left:60px;
+  top: 40px;
+  @include transform-origin( 0% 50% );
+  @include animation( s6ani 10.0s forwards infinite );
+}
+
+@include keyframes( cube ) {
+  0% {
+    @include transform( rotateX(0deg) );
+  }
+  30% {
+    @include transform( rotateX(0deg) );
+  }
+  40% {
+    @include transform( rotateX(45deg) rotateY(0deg) rotateZ(45deg) ); /* CUBE ROTATES BACK */
+  }
+  60% {
+    @include transform( rotateX(60deg) rotateY(0deg)  rotateZ(45deg)  ); /* ARMS FOLD UP */
+  }
+  65% {
+    @include transform( rotateX(60deg) rotate(45deg) rotateZ(180deg)  ); /* SPIN REVEALS CYAN RIGHT, RED LEFT (s2) */
+  }
+  70% {
+    @include transform( rotateX(60deg) rotate(45deg) rotateZ(180deg) );
+  }
+  75% {
+    @include transform( rotateX(60deg) rotate(45deg) rotateZ(360deg) ); /* SPIN REVEALS MAGENTA RIGHT, YELLOW LEFT (s4) */
+  }
+  80% {
+    @include transform( rotateX(60deg) rotate(45deg) rotateZ(360deg) );
+  }
+  90% {
+    @include transform( rotateX(0deg) rotate(0deg) rotateZ(0deg) ); /* FADE TO BLACK */
+  }
+}
+@include keyframes( s1ani ) {
+  0% {
+    opacity: 1;
+    @include transform( translateY(0px) );
+    background: rgba(255,255,255,1);
+  }
+  40% {
+    @include transform( rotateX(0deg) );
+    background: rgba(255,255,255,1);
+  }
+  50% {
+    @include transform( rotateX(-90deg) );
+    background: rgba(255,255,255,1);
+  }
+  90% {
+    @include transform( rotateX(-90deg) );
+  }
+}
+@include keyframes( s2ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  10% {
+    opacity: 1;
+    @include transform( rotateX(0deg) );
+  }
+  40% {
+    background: white;
+  }
+  45% {
+    background: rgb(180,180,180);
+  }
+  65% {
+    opacity: 1;
+    background: rgb(180,180,180); /* DARKEST VISIBLE */
+  }
+  80% {
+    background: rgb(180,180,180);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@include keyframes( s3ani ) { 
+  // bottom square
+  0% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  10% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  20% {
+    opacity: 1;
+    @include transform( rotateX(0deg) );
+  }
+  40% {
+    background: white;
+  }
+  45% {
+    background: rgb(150,150,150); /* DARKEST VISIBLE */
+  }
+  90% {
+    opacity: 1;
+    @include transform( rotateX(0deg) );
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@include keyframes( s4ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  10% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+    @include transform( rotateX(-179deg) );
+  }
+  30% {
+    opacity: 1;
+    @include transform( rotateX(0deg) );
+  }
+  40% {
+    @include transform( rotateX(0deg) );
+    background: white;
+  }
+  50% {
+    @include transform( rotateX(90deg) );
+    background: rgb(180,180,180);
+  }
+  80% {
+    background: rgb(180,180,180);
+  }
+  90% {
+    opacity: 1;
+    @include transform( rotateX(90deg) );
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@include keyframes( s5ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateY(-179deg) );
+  }
+  10% {
+    opacity: 0;
+    @include transform( rotateY(-179deg) );
+  }
+  20% {
+    opacity: 1;
+    background: white;
+    @include transform( rotateY(0deg) );
+  }
+  40% {
+    @include transform( rotateY(0deg) );
+  }
+  50% {
+    @include transform( rotateY(90deg) );
+  }
+  55% {
+    background: white;
+  }
+  60% {
+    background: rgb(200,200,200);
+  }
+  90% {
+    @include transform( rotateY(90deg) );
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@include keyframes( s6ani ) {
+  0% {
+    opacity: 0;
+    @include transform( rotateY(179deg) );
+  }
+  20% {
+    opacity: 0;
+    @include transform( rotateY(179deg) );
+  }
+  30% {
+    opacity: 1;
+    @include transform( rotateY(0deg) );
+  }
+  40% {
+    @include transform( rotateY(0deg) );
+  }
+  50% {
+    @include transform( rotateY(-90deg) );
+    background: white
+  }
+  60% {
+    background: rgb(200,200,200);
+  }
+  80% {
+    background: rgb(200,200,200);
+  }
+  90% {
+    opacity:1;
+    @include transform( rotateY(-90deg) );
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@include keyframes( half-fold ) {
+  0% {
+    @include transform( rotateX(0deg) );
+  }
+  50% {
+    @include transform( rotateX(0deg) );
+  }
+  60% {
+    @include transform( rotateX(-90deg) );
+  }
+  90% {
+    @include transform( rotateX(-90deg) );
+  }
+}

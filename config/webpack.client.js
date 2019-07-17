@@ -11,7 +11,8 @@ module.exports = {
   mode: 'production',
   entry: {
     app: './client/App.js', 
-    test: './client/scripts/index.js'
+    js: './client/scripts/index.js',
+    css: './client/styles/whirlpool.css'
   },
   output: {
     path: path.join(process.cwd(), '/dist/public'),
@@ -25,6 +26,12 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           'babel-loader'
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          { loader: 'style-loader/url' }, { loader: 'file-loader' }
         ]
       }
     ]

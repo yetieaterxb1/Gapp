@@ -9,16 +9,13 @@ const compression = require('compression')
 const helmet = require('helmet')
 const cors = require('cors')
 const glob = require('glob')
-const path = require('path')
-
 
 const config = require('../config/config')
 const sessionConfig = require('../config/session')
 
-const publicPath = path.resolve(__dirname, './dist/public')
 const app = express()
 
-app.use(express.static(path.join(config.root, '/dist/public')))
+app.use(express.static(config.static.dir, config.static.options))
 app.use(logger('dev'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -30,9 +27,8 @@ mongoose.connect(config.db.URI, config.db.connectionOpts)
 mongoose.connection.once('open', () => console.log('MongoDB conection successful.'))
 mongoose.connection.on('error', 
   console.error.bind(console, "MongoDB connection error: ")
-  // throw new Error('unable to connect to database at ' + config.db);
+  // throw new Error('Unable to connect to database at ' + config.db); 
 )
-
 app.use(session(sessionConfig(mongoose, mongoStore)))
 
 passport.serializeUser((user, done) => {

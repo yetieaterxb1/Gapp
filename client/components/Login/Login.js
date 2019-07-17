@@ -1,45 +1,72 @@
 import React, { Component } from 'react'
+import { Redirect } from "react-router-dom";
+import { connect } from 'react-redux'
+
+import Loader from '../Common/Loader'
+
+import loginActionCreator from '../../actions/login'
+
 
 class Login extends Component {
   constructor(props){
     super(props)
-    this.state = {
-      username: 'admin',
-      password: 'password'
-    }
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.onChange = this.onChange.bind(this)
   }
-  handleSubmit(e){
-    console.log('Submitted...')
-    fetch('http://localhost:8000/login', {
-      method: 'POST',
-      mode: 'cors',
-      body: JSON.stringify({
-        username: e.target.username,
-        password: e.target.password
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }).then(data => data.json())
-    .then(res => console.log(res.message))
-  }
-  onChange(e){
-    this.setState({
-      [e.target.id]: e.target.value
-    })
-  }
+
   render() {
+    if(this.props.isAuthenticated){
+      return <Redirect to='/user'/>
+    }
     return (
-      <div>
+      <>
+      <Loader display={this.props.isLoading}/>
+      <div style={{display: this.props.isLoading ? 'none' : 'initial'}}>
         <h1> Login </h1>
-        <input id='username' value={this.state.username} onChange={this.onChange}></input>
-        <input id='password' value={this.state.password} onChange={this.onChange}></input>
-        <button onClick={this.handleSubmit}></button>
+        <input id='username' value={this.props.credentials.username} onChange={this.props.onChange}></input>
+        <input id='password' value={this.props.credentials.password} onChange={this.props.onChange}></input>
+        <button onClick={this.props.submitLogin}></button>
+        <p>{this.props.message}</p>
       </div>
+      </>
     )
   }
 }
 
-export default Login
+const mapStateToProps = (state, ownProps) => {
+  return {
+    credentials: state.login.credentials,
+    open: state.login.open,
+    isAuthenticated: state.login.isAuthenticated,
+    message: state.login.isAuthenticated,
+    isLoading: state.login.isLoading
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    submitLogin: (credentials) => {
+        dispatch(loginActionCreator.submitLogin(credentials))
+    },
+    onChange: (event) => {
+      dispatch(loginActionCreator.onChange(event))
+    }
+  }
+}
+
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login)
+
+// export default Login
+
+// initState is a function which is runs before the server, and keeps consistency as thunk middleware
+// loginContainer.initState = (store, req, res) => {
+//   return (dispatch, getState) => {
+//     return new Promise( (resolve, reject)=> {
+//       resolve ()
+//     })
+//   }
+// }
+

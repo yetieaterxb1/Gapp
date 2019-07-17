@@ -9,7 +9,8 @@ module.exports = {
   devtool: 'source-map',
   entry: {
     app: './client/App.js', 
-    javascript: './client/scripts/index.js'
+    js: './client/scripts/index.js',
+    css: './client/styles/whirlpool.css'
   },
   module: {
     rules: [
@@ -18,6 +19,12 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           'babel-loader'
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          { loader: 'style-loader/url' }, { loader: 'file-loader' }
         ]
       }
     ]

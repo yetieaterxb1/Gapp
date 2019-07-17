@@ -1,8 +1,24 @@
 const path = require('path')
 
+const root = process.cwd()
+
 module.exports = {
-  root: path.join(process.cwd()),
+  root: root,
   port: 8000,
+  static: {
+    dir: path.join(root, '/dist/public'),
+    options: {
+      dotfiles: 'ignore',
+      etag: false,
+      index: 'index.html',
+      maxAge: '1d',
+      redirect: true,
+      fallthrough: true,
+      setHeaders: function (res, path, stat) {
+        res.set('x-timestamp', Date.now())
+      }
+    }
+  },
   db: {
     URI: 'mongodb://localhost/users',
     connectionOpts: {

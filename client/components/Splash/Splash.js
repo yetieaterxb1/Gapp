@@ -10,7 +10,7 @@ class Splash extends Component {
         <h1> Splash/landing page </h1>
         <Link to="/login">
           <Button variant="contained" to="/login">
-            Link
+            Login
           </Button>
         </Link>
       </div>

@@ -32,9 +32,9 @@ You can choose to start in either production or development mode. Choose from on
 #### 3.1 In development mode (recommended)
 To start in development mode, enter the following command. 
 
-`npm run build:dev`
-
 `npm run start:dev`
+
+This command builds the client bundle with `webpack --watch` and starts the node server with `nodemon` .
  
  #### 3.2 In development mode with hot module replacement (not recommended)
 HMR requires a proxy, which is not configured right now. 
@@ -55,3 +55,24 @@ MongoDB conection successful.
 ```
 
 To open the app, copy/paste `localhost:8000` into your browser's URL bar.
+
+
+# API
+<details closed>
+<summary>
+    <span style='font-size:1.6em'>/</span>
+</summary>
+&emsp;GET
+</details>
+
+<details closed>
+<summary>
+    <span style='font-size:1.6em'>/login</span>
+</summary>
+POST <br>
+&emsp; <strong> Required: </strong> <br>
+&emsp;&emsp; username=[String] <br>
+&emsp;&emsp; password=[String] <br>
+&emsp; <strong> Optional: </strong> <br>
+&emsp;&emsp;
+</details>
