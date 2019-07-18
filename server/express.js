@@ -9,6 +9,7 @@ const compression = require('compression')
 const helmet = require('helmet')
 const cors = require('cors')
 const glob = require('glob')
+const path = require('path')
 
 const config = require('../config/config')
 const sessionConfig = require('../config/session')
@@ -41,14 +42,20 @@ passport.deserializeUser((id, done) => {
 });
 app.use(passport.initialize());
 app.use(passport.session());
-glob.sync('./api/passport/*.js').forEach( Strategy => {
-  console.log('Strategy')
-  passport.use(new Strategy())
+glob.sync('./api/passport/*.js').forEach( module => {
+  const Strategy = require(path.join(config.root, '/server/api/passport/', module))
+  console.log(Strategy)
 })
 
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1) // trust first proxy
   session.cookie.secure = true // serve secure cookies
 }
+
+
+passport.use(...require('../server/api/passport/JWTStrategy.js').Strategy)
+passport.use(...require('../server/api/passport/LocalStrategy.js').Strategy)
+
+app.passport = passport
 
 module.exports = app

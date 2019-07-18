@@ -28,7 +28,7 @@ const styles = {
 
 
 function ButtonAppBar(props) {
-  const { classes } = props;
+  const { classes } = props
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -66,6 +66,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     submitLogout: (credentials) => {      
       dispatch(loginActionCreator.submitLogout())
+      // loginActionCreator.submitLogout()
     }
   }
 }

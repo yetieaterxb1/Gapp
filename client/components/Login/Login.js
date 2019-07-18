@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
 
 import Loader from '../Common/Loader'
@@ -10,6 +10,10 @@ import loginActionCreator from '../../store/actions/login.js'
 class Login extends Component {
   constructor(props){
     super(props)
+  }
+
+  componentWillMount(){
+    this.props.stopLoading()
   }
 
   render() {
@@ -45,6 +49,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     submitLogin: (credentials) => {
         dispatch(loginActionCreator.submitLogin(credentials))
+    },
+    stopLoading: () => {
+      dispatch(loginActionCreator.stopLoading())
     },
     onChange: (event) => {
       dispatch(loginActionCreator.onChange(event))

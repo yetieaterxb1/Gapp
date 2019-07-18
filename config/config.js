@@ -2,6 +2,8 @@ const path = require('path')
 
 const root = process.cwd()
 
+const JWT_SECRET = 'secret'
+
 module.exports = {
   root: root,
   port: 8000,
@@ -12,8 +14,8 @@ module.exports = {
     //   etag: false,
       index: 'index.html',
     //   maxAge: '1d',
-    //   redirect: true,
-      fallthrough: true,
+      redirect: false,
+      fallthrough: false,
     //   setHeaders: function (res, path, stat) {
     //     res.set('x-timestamp', Date.now())
     //   }
@@ -21,8 +23,14 @@ module.exports = {
   },
   passport: {
     jwt: {
-      secret: 'secret'
+      secretOrKey: JWT_SECRET
     }
+  },
+  jwt: {
+    opts:{
+      expiresIn: 60000,
+    },
+    secret: JWT_SECRET
   },
   db: {
     URI: 'mongodb://localhost/users',

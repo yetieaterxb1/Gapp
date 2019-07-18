@@ -7,12 +7,15 @@ function login(req, res, next){
     password: req.body.password
   }
   req.login(userCreds, function(err){
+    console.log(err)
     const isAuthed = req.isAuthenticated()
     if(err){ 
       next(err)
     }else if(isAuthed){ 
-      req.signJWT(req.user, { expiresIn: 36000 })
+      req.signJWT(req.user)
       .then(function(result){
+        console.log('JWT Result:', result)
+        console.log('Is Authed:', isAuthed)
         const response = {
           jwt: result,
           isAuthenticated: isAuthed,
@@ -23,9 +26,10 @@ function login(req, res, next){
         }else{
           res.status(200).send(response)
         }
-      })
+      }).catch(function(err){console.error(err)})
     }else{
       res.status(401).send({
+        jwt: null,
         isAuthenticated: isAuthed,
         message: 'Incorrect username or password.'
       })
@@ -35,17 +39,14 @@ function login(req, res, next){
 
 function logout(req, res, next){
   console.log('LOGOUT', req.isAuthenticated())
-  req.logout()
   const isAuthed = req.isAuthenticated()
-    if(err){
-      console.error(err)
-      res.status(500).json({isAuthentiated: isAuthed, message: 'Logout NOT successful.'})
-    }else if(!isAuthed){
-      res.status(205).json({isAuthentiated: isAuthed, message: 'Logout successful.'})
-    }else{
-      res.status(205).json({isAuthentiated: isAuthed, message: 'Logout successful.'})
-    }
-    console.log(req.isAuthenticated)
+  console.log('req.logout', req.logout())
+  if(isAuthed){
+    res.status(500).json({isAuthentiated: isAuthed, message: 'Logout NOT successful.'})
+  }else{
+    res.status(205).json({isAuthentiated: isAuthed, message: 'Logout successful.'})
+  }
+  console.log(req.isAuthenticated)
 }
 
 function signup(req,res,next){  

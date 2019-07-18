@@ -6,11 +6,17 @@ const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS'
 const LOGOUT_FAIL = 'LOGOUT_FAIL'
 const ON_CHANGE = 'ON_CHANGE'
 const IS_AUTHED = 'IS_AUTHED'
+const STOP_LOADING = 'STOP_LOADING'
 
 const loginActionCreator = {
   onChange: (e) => {
     return (dispatch, getState) => {
       dispatch({ type: ON_CHANGE, event: e})
+    }
+  },
+  stopLoading: () => {
+    return (dispatch) => {
+      dispatch({ type: STOP_LOADING })
     }
   },
   submitLogin : (e) => {
@@ -52,7 +58,7 @@ const loginActionCreator = {
     return function(dispatch, getState){
       dispatch({type: SUBMIT_LOGOUT})
       fetch('http://localhost:8000/logout', {
-        
+
       })
       .then(function(data){ console.log(data) })
       // .then(data => data.json())
@@ -72,6 +78,11 @@ const loginActionCreator = {
         
       // })
       // .then(res => dispatch({type: IS_AUTHED}))
+    }
+  },
+  isAuthenticated: () => {
+    return (dispatch, getState) => {
+      console.log(getState())
     }
   }
 }
