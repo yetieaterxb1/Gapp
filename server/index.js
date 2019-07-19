@@ -16,22 +16,27 @@ app.use('/*', function(req, res, next){
   next()
 })
 
-// app.get('/', function(req, res, next){
-//   res.status(200).json({})
-// })
-
-app.get('/login', passport.authenticate('local', { session:true }), function(req,res){res.send()})
-app.post('/login', login)
+app.get('/login', function(req,res){res.send()})
+app.post('/login', passport.authenticate('local', { session:false }), login)
 
 app.get('/logout', logout)
 
 app.get('/signup', signup)
 
 
-app.get('/user/:username', function(req,res,next) {
-  console.log('USER: ', req.params.user)
-  console.log('Is AUTHED: ', req.isAuthenticated())
-  res.send()
+app.get('/user', 
+  passport.authenticate('jwt', { session: false }), 
+  function(req,res,next) {
+    console.log('USER: ', req.params.user)
+    console.log('Is AUTHED: ', req.isAuthenticated())
+    res.redirect('/#/user')
+})
+app.post('/user',
+  passport.authenticate('jwt', { session: false }), 
+  function(req,res,next) {
+    console.log('USER: ', req.params.user)
+    console.log('Is AUTHED: ', req.isAuthenticated())
+    res.send()
 })
 
 app.use('/*', function(err, req, res, next){

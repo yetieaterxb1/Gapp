@@ -17,8 +17,8 @@ class Home extends Component {
     super(props)
   }
   componentDidMount() {
-    const isAuthed = this.props.isAuthenticated
-    console.log('Is Authed: ', isAuthed)
+    this.props.checkAuth()
+    this.props.getProfile()
   }
   render() {
     if(!this.props.isAuthenticated){
@@ -28,7 +28,7 @@ class Home extends Component {
       <>
         <Loader display={this.props.isLoading}/>
         <div>
-          <Appbar />
+          <Appbar cookies={this.props.cookies}/>
           <Grid container direction="row" alignItems="flex-start" spacing={3}>
             <Grid item xs={3}>
               <ProjectList />
@@ -47,20 +47,28 @@ const mapStateToProps = (state, ownProps) => {
   return {
     credentials: state.login.credentials,
     open: state.login.open,
+    jwt: state.login.jwt,
     isAuthenticated: state.login.isAuthenticated,
     message: state.login.isAuthenticated,
-    isLoading: state.login.isLoading
+    isLoading: state.login.isLoading,
+    cookies: ownProps.cookies
   }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
+    getProfile: () => {
+      dispatch(userActionCreator.getProfile(ownProps.cookies))
+    },
     submitLogout: (credentials) => {
-        dispatch(loginActionCreator.submitLogout(credentials))
+        dispatch(loginActionCreator.submitLogout(ownProps.cookies))
     },
     onChange: (event) => {
       dispatch(loginActionCreator.onChange(event))
     },
+    checkAuth: () => {
+      dispatch(loginActionCreator.checkAuth(ownProps.cookies))
+    }
   }
 }
 

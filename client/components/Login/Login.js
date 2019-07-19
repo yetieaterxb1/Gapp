@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
+import { useCookies } from 'react-cookie';
 
 import Loader from '../Common/Loader'
 
@@ -13,6 +14,7 @@ class Login extends Component {
   }
 
   componentWillMount(){
+    this.props.checkAuth()
     this.props.stopLoading()
   }
 
@@ -41,25 +43,28 @@ const mapStateToProps = (state, ownProps) => {
     open: state.login.open,
     isAuthenticated: state.login.isAuthenticated,
     message: state.login.isAuthenticated,
-    isLoading: state.login.isLoading
+    isLoading: state.login.isLoading,
+    cookies: ownProps.cookies
   }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     submitLogin: (credentials) => {
-        dispatch(loginActionCreator.submitLogin(credentials))
+      const cookies = ownProps.cookies
+      dispatch(loginActionCreator.submitLogin(credentials, cookies))
     },
     stopLoading: () => {
       dispatch(loginActionCreator.stopLoading())
     },
     onChange: (event) => {
       dispatch(loginActionCreator.onChange(event))
+    },
+    checkAuth: () => {
+      dispatch(loginActionCreator.checkAuth(ownProps.cookies))
     }
   }
 }
-
-
 
 export default connect(
   mapStateToProps,

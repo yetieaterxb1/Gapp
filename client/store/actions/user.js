@@ -1,5 +1,4 @@
 const ON_CHANGE = 'ON_CHANGE'
-const RECEIVE_LOGIN = 'RECEIVE_LOGIN'
 const GET_PROFILE = 'GET_PROFILE'
 const SHOW_PROJECTLIST = 'SHOW_PROJECTLIST'
 
@@ -9,10 +8,28 @@ const userActionCreator = {
       dispatch({ type: ON_CHANGE, event: e})
     }
   },
-  getProfile: () => {
+  getProfile: (cookies) => {
     return (dispatch, getState) => {
       const profile = 'TODO:: profile'
-      dispatch({ type: GET_PROFILE, profile: profile })
+      const jwt = cookies.get('jwt') || getState().login.jwt.token
+      console.log('JWT getProfile: ', jwt)
+      if(jwt){
+        fetch('http://localhost:8000/user', {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            id: jwt
+          }),
+          headers: {
+            'authorization': jwt
+          }
+        }).then(function(data){
+          console.log(data)
+        })
+        dispatch({ type: GET_PROFILE, profile: profile})
+      }else{
+
+      }
     }
   },
   showProjectList: () => {
@@ -20,10 +37,5 @@ const userActionCreator = {
       dispatch({ type: SHOW_PROJECTLIST })
     }
   }
-  // receiveLogin: (res) => {
-  //   return (dispatch, getState) => {
-  //     dispatch({ type: RECEIVE_LOGIN, res: res })
-  //   }
-  // }
 }
 export default userActionCreator

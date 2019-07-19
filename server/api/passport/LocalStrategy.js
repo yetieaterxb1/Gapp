@@ -7,30 +7,20 @@ const LocalStrategy = require('passport-local').Strategy
 exports.Strategy = [
 'local',
   new LocalStrategy(function(username, password, done){
-    User.findOne({username:username}, function(err,user){
+    User.findOne({username: username}, function(err, user){
+      console.log('LocalStrategy', user)
       if(!err && user){
-        console.log('User findOne !err && user')
-        new Promise(function(resolve, reject){
-          bcrypt.compare(password, user.password, function(err, res) {
-            if(!err){
-              if(res===true){
-                resolve(res)
-              }else{
-                reject('Wrong password')
-              }
-            }else{
-              reject(err)
-            }
-          })
-        }).then(function(err, q){
-          if(!err && q){
-            return(done(null, user))
+        user.authenticate(password).then(function(res) {
+          console.log('res', res)
+          if(res){
+            console.log('OK')
+            done(null, user)
           }else{
-            return(done(null, false, {message: 'Wrong credentials:: ' + err}))
+            done(null, false, { message: 'Wrong password' })
           }
         })
       }else{
-        return(done(null,false, { message: 'Wrong credentials'  + err}))
+        return(done(err, false, { message: 'Error finding user ' + username }))
       }
     })
   })

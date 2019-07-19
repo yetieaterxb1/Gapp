@@ -3,6 +3,7 @@ const INIT_STATE = {
     username: 'admin',
     password: 'password',
   },
+  jwt: null,
   isAuthenticated: false,
   message: false,
   isLoading: false
@@ -23,26 +24,30 @@ const loginReducer = (state=INIT_STATE, action) => {
       return Object.assign({}, state, { isLoading: true })
     }
     case 'LOGIN_SUCCESS':{
+      const jwt = action.jwt
       const message = action.message
-      return Object.assign({}, state, { isAuthenticated: true, isLoading: false, message: message })
+      return Object.assign({}, state, { jwt: jwt, isAuthenticated: true, isLoading: false, message: message })
     }
     case 'LOGIN_FAIL':{
       const message = action.message
-      return Object.assign({}, state, { isAuthenticated: false, isLoading:false, message: message }) 
+      return Object.assign({}, state, { isAuthenticated: false, isLoading: false, message: message }) 
     }
     case 'SUBMIT_LOGOUT':{
       console.log('SUBMIT_LOGOUT')
-      return Object.assign({}, state, { isAuthenticated: false, isLoading:true })
+      return Object.assign({}, state, { jwt: null, isAuthenticated: false, isLoading: true })
     }
     case 'LOGOUT_SUCCESS':{
       const message = action.message
       console.log('LOGOUT_SUCCESS')
-      return Object.assign({}, state, { isAuthenticated: false, isLoading:false, message: message })
+      return Object.assign({}, state, { jwt: null, isAuthenticated: false, isLoading: false, message: message })
     }
     case 'LOGOUT_FAIL':{
       console.log('LOGOUT_FAIL')
       const message = action.message
-      return Object.assign({}, state, { isAuthenticated: true, isLoading:false, message: message }) 
+      return Object.assign({}, state, { isAuthenticated: true, isLoading: false, message: message }) 
+    }
+    case 'IS_AUTHED':{
+      return Object.assign({}, state, { isAuthenticated: action.isAuthenticated })
     }
     default:
       return state

@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { withCookies } from 'react-cookie';
+
 import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -28,6 +30,7 @@ const styles = {
 
 function ButtonAppBar(props) {
   const { classes } = props
+  console.log('AppBar cookies', props.cookies)
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -50,21 +53,17 @@ ButtonAppBar.propTypes = {
 }
 
 
-// const mapStateToProps = (state, ownProps) => {
-//   return {
-//     classes: ownProps.classes,
-//     credentials: state.login.credentials,
-//     open: state.login.open,
-//     isAuthenticated: state.login.isAuthenticated,
-//     message: state.login.isAuthenticated,
-//     isLoading: state.login.isLoading
-//   }
-// }
+const mapStateToProps = (state, ownProps) => {
+  return {
+    cookies: ownProps.cookies
+  }
+}
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     submitLogout: (credentials) => {      
-      dispatch(loginActionCreator.submitLogout())
+      const cookies = ownProps.cookies
+      dispatch(loginActionCreator.submitLogout(cookies))
     },
     showProjectList: () => {     
       dispatch(userActionCreator.showProjectList())
@@ -72,8 +71,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   }
 }
 
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )( withStyles(styles)(ButtonAppBar) )
 

@@ -50,7 +50,7 @@ UserSchema
 
 UserSchema.methods = {
   authenticate: function(hash) {
-    return bcrypt.compareSync(hash, this.password)
+    return bcrypt.compare(hash, this.password)
   },
   encryptPassword: function(password) {
     if (!password) return ''

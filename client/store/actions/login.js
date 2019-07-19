@@ -19,28 +19,32 @@ const loginActionCreator = {
       dispatch({ type: STOP_LOADING })
     }
   },
-  submitLogin : (e) => {
+  submitLogin : (credentials, cookies) => {
     return (dispatch, getState) => {
-      if(username.id && password.id){
+      console.log('Login action UN/PW: ', username.value, password.value)
+      console.log('Login action UN/PW: ', cookies.cookies.set)
+      if(username.value && password.value){
         dispatch({type: SUBMIT_LOGIN})
         fetch('http://localhost:8000/login', {
           method: 'POST',
           mode: 'cors',
           body: JSON.stringify({
-            username: username.id,
-            password: password.id
+            username: username.value,
+            password: password.value
           }),
           headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
           }
         })
         .then(data => data.json())
         .then((res) => {
-          const { isAuthenticated, message } = res
+          const { jwt, isAuthenticated, message } = res
           if(isAuthenticated){
+            cookies.set('jwt', jwt.token, { path: '/' }) // Set cookie so that requests to non-hashed routes can be authenticated
             setTimeout(function(){
               dispatch({
                 type: LOGIN_SUCCESS,
+                jwt: jwt, // JWTStrategy can extract tokens from both cookies and headers
                 message: message
               })
             },3500)
@@ -50,16 +54,15 @@ const loginActionCreator = {
               message: message
             })
           }
-        }).then(res => dispatch({type: IS_AUTHED}))
+        })
       }        
     }
   },
-  submitLogout: function(){
+  submitLogout: function(cookies){
     return function(dispatch, getState){
+      cookies.set('jwt', null)
       dispatch({type: SUBMIT_LOGOUT})
-      fetch('http://localhost:8000/logout', {
-
-      })
+      fetch('http://localhost:8000/logout')
       .then(function(data){ console.log(data) })
       // .then(data => data.json())
       // .then((res) => {
@@ -80,9 +83,30 @@ const loginActionCreator = {
       // .then(res => dispatch({type: IS_AUTHED}))
     }
   },
-  isAuthenticated: () => {
+  checkAuth: (cookies) => {
     return (dispatch, getState) => {
-      console.log(getState())
+      const jwt = cookies.get('jwt') || getState().login.jwt.token
+      if(jwt){
+        fetch('http://localhost:8000/user', {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            id: jwt
+          }),
+          headers: {
+            'authorization': jwt
+          }
+        }).then(data => data.json()).then((res) => {
+          if(res.ok){
+            dispatch({ type: IS_AUTHED, isAuthenticated: true })
+          }else{
+            dispatch({ type: IS_AUTHED, isAuthenticated: false })    
+          }
+        })
+        
+      }else{
+        dispatch({ type: IS_AUTHED, isAuthenticated: false })
+      }
     }
   }
 }

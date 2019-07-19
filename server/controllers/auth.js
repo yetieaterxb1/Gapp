@@ -1,29 +1,26 @@
 const User = require('../models/User')
 
 function login(req, res, next){
-  console.log('LOGIN')
   const userCreds = {
     username: req.body.username,
     password: req.body.password
   }
   req.login(userCreds, function(err){
     const isAuthed = req.isAuthenticated()
-    if(err){ 
+    if(err){
       next(err)
-    }else if(isAuthed){ 
+    }else if(isAuthed){
       req.signJWT(req.user)
       .then(function(result){
-        console.log('\nJWT Result:', result)
-        console.log('\nIs Authed:', isAuthed)
         const response = {
           jwt: result,
           isAuthenticated: isAuthed,
           message: 'Login successful.'
         }
         if(result.error){
-          res.status(500).send(response) // User is logged in but cant be tokenized...?
+          res.status(500).json(response) // User is logged in but cant be tokenized...?
         }else{
-          res.status(200).send(response)
+          res.status(200).json(response)
         }
       }).catch(function(err){ console.error(err) })
     }else{
@@ -45,7 +42,6 @@ function logout(req, res, next){
   }else{
     res.status(205).json({isAuthentiated: isAuthed, message: 'Logout successful.'})
   }
-  console.log('Is Authed:', req.isAuthenticated())
 }
 
 function signup(req,res,next){  
