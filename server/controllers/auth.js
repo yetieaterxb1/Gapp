@@ -1,21 +1,20 @@
 const User = require('../models/User')
 
 function login(req, res, next){
-  console.log('LOGIN', req.isAuthenticated())
+  console.log('LOGIN')
   const userCreds = {
     username: req.body.username,
     password: req.body.password
   }
   req.login(userCreds, function(err){
-    console.log(err)
     const isAuthed = req.isAuthenticated()
     if(err){ 
       next(err)
     }else if(isAuthed){ 
       req.signJWT(req.user)
       .then(function(result){
-        console.log('JWT Result:', result)
-        console.log('Is Authed:', isAuthed)
+        console.log('\nJWT Result:', result)
+        console.log('\nIs Authed:', isAuthed)
         const response = {
           jwt: result,
           isAuthenticated: isAuthed,
@@ -26,7 +25,7 @@ function login(req, res, next){
         }else{
           res.status(200).send(response)
         }
-      }).catch(function(err){console.error(err)})
+      }).catch(function(err){ console.error(err) })
     }else{
       res.status(401).send({
         jwt: null,
@@ -38,15 +37,15 @@ function login(req, res, next){
 }
 
 function logout(req, res, next){
-  console.log('LOGOUT', req.isAuthenticated())
+  console.log('LOGOUT')
+  req.logout()
   const isAuthed = req.isAuthenticated()
-  console.log('req.logout', req.logout())
   if(isAuthed){
     res.status(500).json({isAuthentiated: isAuthed, message: 'Logout NOT successful.'})
   }else{
     res.status(205).json({isAuthentiated: isAuthed, message: 'Logout successful.'})
   }
-  console.log(req.isAuthenticated)
+  console.log('Is Authed:', req.isAuthenticated())
 }
 
 function signup(req,res,next){  
@@ -62,7 +61,7 @@ function signup(req,res,next){
       var user = new User(userCreds)
       user.save()
       req.login(userCreds, function(err){
-        if (err) { return next(err); }
+        if (err) { return next(err) }
         res.status(200).json({message: 'Signup successful'})
       })  
     }else{

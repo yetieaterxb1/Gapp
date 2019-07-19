@@ -2,8 +2,12 @@ import React, { Component } from 'react'
 import { Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
 
+import Grid from '@material-ui/core/Grid'
+
 import Appbar from '../Common/Appbar'
 import Loader from '../Common/Loader'
+import ProjectList from './ProjectList'
+import ProjectPanel from './ProjectPanel'
 
 import loginActionCreator from '../../store/actions/login.js'
 import userActionCreator from '../../store/actions/user.js'
@@ -24,8 +28,15 @@ class Home extends Component {
       <>
         <Loader display={this.props.isLoading}/>
         <div>
-          <Appbar/>
-          <h1> Home </h1>
+          <Appbar />
+          <Grid container direction="row" alignItems="flex-start" spacing={3}>
+            <Grid item xs={3}>
+              <ProjectList />
+            </Grid>
+            <Grid item xs={9}>
+              <ProjectPanel />
+            </Grid>
+          </Grid>
         </div>
       </>
     )

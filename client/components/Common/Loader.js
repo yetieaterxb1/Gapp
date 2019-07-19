@@ -47,7 +47,6 @@ export default class Loader extends Component {
     super(props)
   }
   render() {
-    console.log(this.props.display)
     return (
       <div id='loader' style={{display: this.props.display ? 'initial' : 'none' }}>
         <Whirlpool/>

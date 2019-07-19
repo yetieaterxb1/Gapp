@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { withRouter, HashRouter, Route } from "react-router-dom";
+import { withRouter, HashRouter, Route } from "react-router-dom"
 
 import { Provider } from 'react-redux'
 

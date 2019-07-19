@@ -1,6 +1,6 @@
 const JwtStrategy = require('passport-jwt').Strategy,
       ExtractJwt = require('passport-jwt').ExtractJwt
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 
 const config = require('../../../config/config.js')
 
@@ -15,13 +15,13 @@ exports.Strategy = [
       // User.findOne({id: jwt_payload.id}, function(err, user) {
       User.findOne({id: jwt_payload.sub}, function(err, user) {
         if (err) {
-            return done(err, false);
+            return done(err, false)
         }
         if (user) {
-            return done(null, user);
+            return done(null, user)
         } else {
             // Or create a new account
-            return done(null, false);
+            return done(null, false)
         }
       })
       // if (Date.now() > jwt_payload.expires) {

@@ -28,20 +28,20 @@ mongoose.connect(config.db.URI, config.db.connectionOpts)
 mongoose.connection.once('open', () => console.log('MongoDB conection successful.'))
 mongoose.connection.on('error', 
   console.error.bind(console, "MongoDB connection error: ")
-  // throw new Error('Unable to connect to database at ' + config.db); 
+  // throw new Error('Unable to connect to database at ' + config.db) 
 )
 app.use(session(sessionConfig(mongoose, mongoStore)))
 
 passport.serializeUser((user, done) => {
-  done(null, user);
-});
+  done(null, user)
+})
 passport.deserializeUser((id, done) => {
   User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
-app.use(passport.initialize());
-app.use(passport.session());
+    done(err, user)
+  })
+})
+app.use(passport.initialize())
+app.use(passport.session())
 glob.sync('./api/passport/*.js').forEach( module => {
   const Strategy = require(path.join(config.root, '/server/api/passport/', module))
   console.log(Strategy)
