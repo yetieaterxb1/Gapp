@@ -12,7 +12,6 @@ const userActionCreator = {
     return (dispatch, getState) => {
       const profile = 'TODO:: profile'
       const jwt = cookies.get('jwt') || getState().login.jwt.token
-      console.log('JWT getProfile: ', jwt)
       if(jwt){
         fetch('http://localhost:8000/user', {
           method: 'POST',
@@ -24,9 +23,9 @@ const userActionCreator = {
             'authorization': jwt
           }
         }).then(function(data){
-          console.log(data)
+          console.log('Get profile --> data: ', data)
+          dispatch({ type: GET_PROFILE, profile: profile})
         })
-        dispatch({ type: GET_PROFILE, profile: profile})
       }else{
 
       }

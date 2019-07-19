@@ -46,7 +46,6 @@ app.use(passport.initialize())
 app.use(passport.session())
 glob.sync('./api/passport/*.js').forEach( module => {
   const Strategy = require(path.join(config.root, '/server/api/passport/', module))
-  console.log(Strategy)
 })
 
 if (app.get('env') === 'production') {

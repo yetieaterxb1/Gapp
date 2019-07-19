@@ -30,7 +30,6 @@ const styles = {
 
 function ButtonAppBar(props) {
   const { classes } = props
-  console.log('AppBar cookies', props.cookies)
   return (
     <div className={classes.root}>
       <AppBar position="static">

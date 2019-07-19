@@ -24,11 +24,13 @@ const loginReducer = (state=INIT_STATE, action) => {
       return Object.assign({}, state, { isLoading: true })
     }
     case 'LOGIN_SUCCESS':{
+      console.log('LOGIN_SUCCESS')
       const jwt = action.jwt
       const message = action.message
       return Object.assign({}, state, { jwt: jwt, isAuthenticated: true, isLoading: false, message: message })
     }
     case 'LOGIN_FAIL':{
+      console.log('LOGIN_FAIL')
       const message = action.message
       return Object.assign({}, state, { isAuthenticated: false, isLoading: false, message: message }) 
     }

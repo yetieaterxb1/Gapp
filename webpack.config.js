@@ -25,7 +25,7 @@ if(DEV_ENV == 'true'){
   const devServer = new webpackDevServer(compiler, options)
 
   devServer.listen(5000, 'localhost', () => {
-    console.log('dev server listening on port 5000');
+    ('dev server listening on port 5000');
   })
 }
 

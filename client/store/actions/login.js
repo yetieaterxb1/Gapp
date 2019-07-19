@@ -21,8 +21,6 @@ const loginActionCreator = {
   },
   submitLogin : (credentials, cookies) => {
     return (dispatch, getState) => {
-      console.log('Login action UN/PW: ', username.value, password.value)
-      console.log('Login action UN/PW: ', cookies.cookies.set)
       if(username.value && password.value){
         dispatch({type: SUBMIT_LOGIN})
         fetch('http://localhost:8000/login', {
@@ -64,23 +62,6 @@ const loginActionCreator = {
       dispatch({type: SUBMIT_LOGOUT})
       fetch('http://localhost:8000/logout')
       .then(function(data){ console.log(data) })
-      // .then(data => data.json())
-      // .then((res) => {
-      //   const { isAuthenticated, message } = res
-      //   if(isAuthenticated){
-      //     return dispatch({
-      //       type: LOGOUT_FAIL,
-      //       message: message
-      //     })
-      //   }else{
-      //     return dispatch({
-      //       type: LOGOUT_SUCCESS,
-      //       message: message
-      //     })
-      //   }
-        
-      // })
-      // .then(res => dispatch({type: IS_AUTHED}))
     }
   },
   checkAuth: (cookies) => {
@@ -94,9 +75,11 @@ const loginActionCreator = {
             id: jwt
           }),
           headers: {
-            'authorization': jwt
+            'authorization': jwt,
+            'Content-Type': 'application/json'
           }
-        }).then(data => data.json()).then((res) => {
+        })
+        .then((res) => {
           if(res.ok){
             dispatch({ type: IS_AUTHED, isAuthenticated: true })
           }else{

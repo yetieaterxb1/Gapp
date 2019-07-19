@@ -65,7 +65,6 @@ module.exports = {
         if (message.indexOf('Total precache size is') === 0) {
           return
         }
-        console.log(message)
       },
       minify: true,
       navigateFallback: '/index.html',

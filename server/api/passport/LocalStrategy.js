@@ -8,12 +8,9 @@ exports.Strategy = [
 'local',
   new LocalStrategy(function(username, password, done){
     User.findOne({username: username}, function(err, user){
-      console.log('LocalStrategy', user)
       if(!err && user){
         user.authenticate(password).then(function(res) {
-          console.log('res', res)
           if(res){
-            console.log('OK')
             done(null, user)
           }else{
             done(null, false, { message: 'Wrong password' })

@@ -34,7 +34,6 @@ function login(req, res, next){
 }
 
 function logout(req, res, next){
-  console.log('LOGOUT')
   req.logout()
   const isAuthed = req.isAuthenticated()
   if(isAuthed){

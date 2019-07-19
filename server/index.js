@@ -11,7 +11,6 @@ const  logout = require('./controllers/auth').logout
 const  signup = require('./controllers/auth').signup
 
 app.use('/*', function(req, res, next){
-  console.log('Is Authed: ', req.isAuthenticated())
   req.signJWT = signJWT
   next()
 })
@@ -27,15 +26,11 @@ app.get('/signup', signup)
 app.get('/user', 
   passport.authenticate('jwt', { session: false }), 
   function(req,res,next) {
-    console.log('USER: ', req.params.user)
-    console.log('Is AUTHED: ', req.isAuthenticated())
     res.redirect('/#/user')
 })
 app.post('/user',
   passport.authenticate('jwt', { session: false }), 
   function(req,res,next) {
-    console.log('USER: ', req.params.user)
-    console.log('Is AUTHED: ', req.isAuthenticated())
     res.send()
 })
 

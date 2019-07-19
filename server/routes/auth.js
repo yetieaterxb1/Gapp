@@ -8,7 +8,6 @@ const router = express.Router()
 
 router.route('/login')
   .get((req,res,next)=>{
-    console.log('LOGIN')
   })
   .post(login)
 

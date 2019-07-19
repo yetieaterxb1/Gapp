@@ -7,11 +7,7 @@ const config = require('../../../config/config.js')
 
 const cookieExtractor = function(req) {
   var token = null;
-  if (req && req.cookies)
-  {
-    token = req.cookies['jwt'];
-  }
-  console.log('req.cookies', req.cookies)
+  if (req && req.cookies) token = req.cookies['jwt'];
   return token;
 };
 
