@@ -22,7 +22,6 @@ app.get('/logout', logout)
 
 app.get('/signup', signup)
 
-
 app.get('/user', 
   passport.authenticate('jwt', { session: false }), 
   function(req,res,next) {
@@ -31,7 +30,7 @@ app.get('/user',
 app.post('/user',
   passport.authenticate('jwt', { session: false }), 
   function(req,res,next) {
-    res.send()
+    res.json({ message: 'Invalid username or password.'})
 })
 
 app.use('/*', function(err, req, res, next){

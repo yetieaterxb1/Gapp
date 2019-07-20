@@ -19,8 +19,9 @@ const loginActionCreator = {
       dispatch({ type: STOP_LOADING })
     }
   },
-  submitLogin : (credentials, cookies) => {
+  submitLogin : (cookies) => {
     return (dispatch, getState) => {
+      console.log(username, password)
       if(username.value && password.value){
         dispatch({type: SUBMIT_LOGIN})
         fetch('http://localhost:8000/login', {
@@ -34,8 +35,15 @@ const loginActionCreator = {
             'Content-Type': 'application/json'
           }
         })
-        .then(data => data.json())
         .then((res) => {
+          if (res.status === 401){
+            return {message: 'Invalid username / password.'}
+          }else{
+            return res.json()
+          }
+        })
+        .then((res) => {
+          console.log('res ', res)
           const { jwt, isAuthenticated, message } = res
           if(isAuthenticated){
             cookies.set('jwt', jwt.token, { path: '/' }) // Set cookie so that requests to non-hashed routes can be authenticated
@@ -83,7 +91,7 @@ const loginActionCreator = {
           if(res.ok){
             dispatch({ type: IS_AUTHED, isAuthenticated: true })
           }else{
-            dispatch({ type: IS_AUTHED, isAuthenticated: false })    
+            dispatch({ type: IS_AUTHED, isAuthenticated: false })
           }
         })
         

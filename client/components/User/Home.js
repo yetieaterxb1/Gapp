@@ -29,7 +29,7 @@ class Home extends Component {
         <Loader display={this.props.isLoading}/>
         <div>
           <Appbar cookies={this.props.cookies}/>
-          <Grid container direction="row" alignItems="flex-start" spacing={3}>
+          <Grid container direction='row' alignItems='flex-start' spacing={3}>
             <Grid item xs={3}>
               <ProjectList />
             </Grid>
@@ -45,7 +45,6 @@ class Home extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    credentials: state.login.credentials,
     open: state.login.open,
     jwt: state.login.jwt,
     isAuthenticated: state.login.isAuthenticated,

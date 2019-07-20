@@ -60,7 +60,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    submitLogout: (credentials) => {      
+    submitLogout: () => {      
       const cookies = ownProps.cookies
       dispatch(loginActionCreator.submitLogout(cookies))
     },
