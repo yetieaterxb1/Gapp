@@ -12,6 +12,10 @@ import ProjectPanel from './ProjectPanel'
 import loginActionCreator from '../../store/actions/login.js'
 import userActionCreator from '../../store/actions/user.js'
 
+const styles = {
+  
+}
+
 class Home extends Component {
   constructor(props){
     super(props)
@@ -28,12 +32,12 @@ class Home extends Component {
       <>
         <Loader display={this.props.isLoading}/>
         <div>
-          <Appbar cookies={this.props.cookies}/>
+          <Appbar cookies={this.props.cookies} />
           <Grid container direction='row' alignItems='flex-start' spacing={3}>
-            <Grid item xs={3}>
-              <ProjectList />
-            </Grid>
-            <Grid item xs={9}>
+              <Grid item xs={3} >
+                <ProjectList />
+              </Grid>
+            <Grid item xs={ this.props.showProjectList? 9:12}>
               <ProjectPanel />
             </Grid>
           </Grid>
@@ -47,10 +51,12 @@ const mapStateToProps = (state, ownProps) => {
   return {
     open: state.login.open,
     jwt: state.login.jwt,
+    username: state.login.username,
     isAuthenticated: state.login.isAuthenticated,
     message: state.login.isAuthenticated,
     isLoading: state.login.isLoading,
-    cookies: ownProps.cookies
+    cookies: ownProps.cookies,
+    showProjectList: state.user.showProjectList
   }
 }
 

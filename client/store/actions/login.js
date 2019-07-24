@@ -4,6 +4,7 @@ const LOGIN_FAIL = 'LOGIN_FAIL'
 const SUBMIT_LOGOUT = 'SUBMIT_LOGOUT'
 const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS'
 const LOGOUT_FAIL = 'LOGOUT_FAIL'
+const SUBMIT_SIGNUP = 'SUBMIT_SIGNUP'
 const ON_CHANGE = 'ON_CHANGE'
 const IS_AUTHED = 'IS_AUTHED'
 const STOP_LOADING = 'STOP_LOADING'
@@ -21,7 +22,6 @@ const loginActionCreator = {
   },
   submitLogin : (cookies) => {
     return (dispatch, getState) => {
-      console.log(username, password)
       if(username.value && password.value){
         dispatch({type: SUBMIT_LOGIN})
         fetch('http://localhost:8000/login', {
@@ -42,15 +42,15 @@ const loginActionCreator = {
             return res.json()
           }
         })
-        .then((res) => {
-          console.log('res ', res)
-          const { jwt, isAuthenticated, message } = res
+        .then((data) => {
+          const { jwt, isAuthenticated, message } = data
           if(isAuthenticated){
             cookies.set('jwt', jwt.token, { path: '/' }) // Set cookie so that requests to non-hashed routes can be authenticated
             setTimeout(function(){
               dispatch({
                 type: LOGIN_SUCCESS,
                 jwt: jwt, // JWTStrategy can extract tokens from both cookies and headers
+                username: data.username,
                 message: message
               })
             },3500)
@@ -69,7 +69,53 @@ const loginActionCreator = {
       cookies.set('jwt', null)
       dispatch({type: SUBMIT_LOGOUT})
       fetch('http://localhost:8000/logout')
-      .then(function(data){ console.log(data) })
+      .then((res) => {
+        if (res.status === 401){
+          return dispatchI({type: LOGOUT_FAIL, message: 'Unable to logout'})
+        }else{
+          res = res.json()
+          return dispatch({type: LOGOUT_SUCCESS, message: 'Logout successful.'}) 
+        }
+      })
+    }
+  },
+  submitSignup: function(cookies){
+    return function(dispatch, getState){
+      if(username.value && password.value && email.value){
+        dispatch({type: SUBMIT_SIGNUP})
+        fetch('http://localhost:8000/signup', {
+          method: 'POST',
+          mode: 'cors',
+          body: JSON.stringify({
+            email: email.value,
+            username: username.value,
+            password: password.value
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(res => res.json())
+        .then((data) => {
+          const { jwt, isAuthenticated, message } = data
+          if(isAuthenticated){
+            cookies.set('jwt', jwt.token, { path: '/' }) 
+            setTimeout(function(){
+              dispatch({
+                type: LOGIN_SUCCESS,
+                jwt: jwt, 
+                username: data.username,
+                message: message
+              })
+            },3500)
+          }else{
+            dispatch({
+              type: LOGIN_FAIL,
+              message: message
+            })
+          }
+        })
+      }
     }
   },
   checkAuth: (cookies) => {

@@ -11,40 +11,15 @@ class Splash extends Component {
     return (
       <div>
         <h1> Splash/landing page </h1>
-        <Link to="/login">
-          <Button variant="contained" to="/login">
-            Login
-          </Button>
+        <Link to="/login" style={{ textDecoration: 'none' }}>
+          <Button variant="contained"> Login </Button>
+        </Link>
+        <Link to="/signup" style={{ textDecoration: 'none' }}>
+          <Button variant="contained"> Signup </Button>
         </Link>
       </div>
     )
   }
 }
-
-// const mapStateToProps = (state, ownProps) => {
-//   return {
-//     credentials: state.login.credentials,
-//     open: state.login.open,
-//     isAuthenticated: state.login.isAuthenticated,
-//     message: state.login.isAuthenticated,
-//     isLoading: state.login.isLoading
-//   }
-// }
-
-// const mapDispatchToProps = (dispatch, ownProps) => {
-//   return {
-//     submitLogin: (credentials) => {
-//         dispatch(loginActionCreator.submitLogin(credentials))
-//     },
-//     onChange: (event) => {
-//       dispatch(loginActionCreator.onChange(event))
-//     }
-//   }
-// }
-
-// export default connect(
-//   mapStateToProps,
-//   mapDispatchToProps
-// )(Splash)
 
 export default Splash

@@ -15,6 +15,7 @@ function login(req, res, next){
         const response = {
           jwt: result,
           isAuthenticated: isAuthed,
+          username: req.user.username,
           message: 'Login successful.'
         }
         if(result.error){
@@ -43,24 +44,47 @@ function logout(req, res, next){
   }
 }
 
-function signup(req,res,next){  
-  const userCreds = {
-    username:req.body.username, 
-    password:req.body.password
+function signup(req,res,next){ 
+  const creds = {
+    email: req.body.email,
+    username: req.body.username, 
+    password: req.body.password
   }
-  User.findOne({ username: userCreds.username }, function(err, user){
+  User.findOne({$or: [ {email: creds.email}, {username: creds.username} ]}, function(err, user){
     if(err){
-      return done(err)
-    }
-    if(!user){
-      var user = new User(userCreds)
-      user.save()
-      req.login(userCreds, function(err){
-        if (err) { return next(err) }
-        res.status(200).json({message: 'Signup successful'})
+      next(err)
+    }else if(!user){
+      var user = new User(creds)
+      user.save(function(err, doc, num) {
+        if(!err){
+          req.login(creds, function(err){
+            const isAuthed = req.isAuthenticated()
+            if (err) { 
+              next(err) 
+            }else{
+              req.signJWT(req.user)
+              .then(function(result){
+                const response = {
+                  jwt: result,
+                  isAuthenticated: isAuthed,
+                  username: req.user.username,
+                  message: 'Signup successful.'
+                }
+                if(result.error){
+                  res.status(500).json(response) // User is signed up but cant be tokenized...?
+                }else{
+                  res.status(200).json(response)
+                }
+              }).catch(function(err){ console.error(err) })
+            }
+          })
+        }else{
+          res.status(200).json({message: 'Signup unsuccessful.'})
+        }
       })  
     }else{
-      res.status(200).json({message: 'That user already exists'})
+      const clash = creds.email === user.email ? 'email' : 'username'
+      res.status(409).json({clash: clash, message: 'That ' + clash  + ' already exists'})
     }
   })
 }

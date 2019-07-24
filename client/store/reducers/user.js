@@ -16,8 +16,14 @@ const userReducer = (state=INIT_STATE, action) => {
       const profile = action.profile
       return Object.assign({}, state, { profile: profile })
     }
+    case 'TOGGLE_PROJECTLIST':{
+      return Object.assign({}, state, { showProjectList: !state.showProjectList })
+    }
     case 'SHOW_PROJECTLIST':{
       return Object.assign({}, state, { showProjectList: true })
+    }
+    case 'HIDE_PROJECTLIST':{
+      return Object.assign({}, state, { showProjectList: false })
     }
     default:
       return state

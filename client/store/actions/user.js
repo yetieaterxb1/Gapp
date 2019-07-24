@@ -1,6 +1,8 @@
 const ON_CHANGE = 'ON_CHANGE'
 const GET_PROFILE = 'GET_PROFILE'
+const TOGGLE_PROJECTLIST = 'TOGGLE_PROJECTLIST'
 const SHOW_PROJECTLIST = 'SHOW_PROJECTLIST'
+const HIDE_PROJECTLIST = 'HIDE_PROJECTLIST'
 
 const userActionCreator = {
   onChange: (e) => {
@@ -23,7 +25,6 @@ const userActionCreator = {
             'authorization': jwt
           }
         }).then(function(data){
-          console.log('Get profile --> data: ', data)
           dispatch({ type: GET_PROFILE, profile: profile})
         })
       }else{
@@ -31,9 +32,19 @@ const userActionCreator = {
       }
     }
   },
+  toggleProjectList: () => {
+    return (dispatch, getState) => {
+      dispatch({ type: TOGGLE_PROJECTLIST })
+    }
+  },
   showProjectList: () => {
     return (dispatch, getState) => {
       dispatch({ type: SHOW_PROJECTLIST })
+    }
+  },
+  hideProjectList: () => {
+    return (dispatch, getState) => {
+      dispatch({ type: HIDE_PROJECTLIST })
     }
   }
 }

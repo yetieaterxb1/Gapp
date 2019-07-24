@@ -29,18 +29,18 @@ const styles = {
 }
 
 function ButtonAppBar(props) {
-  const { classes } = props
+  const { submitLogout, toggleProjectList, username, classes } = props
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton className={classes.menuButton} onClick={props.showProjectList} color="inherit" aria-label="Menu">
+          <IconButton className={classes.menuButton} onClick={toggleProjectList} color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" className={classes.grow}>
-            Username
+            { username }
           </Typography>
-          <Button color="inherit" onClick={props.submitLogout}>Logout</Button>
+          <Button color="inherit" onClick={submitLogout}>Logout</Button>
         </Toolbar>
       </AppBar>
     </div>
@@ -54,7 +54,8 @@ ButtonAppBar.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    cookies: ownProps.cookies
+    cookies: ownProps.cookies,
+    username: state.login.username
   }
 }
 
@@ -64,8 +65,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       const cookies = ownProps.cookies
       dispatch(loginActionCreator.submitLogout(cookies))
     },
+    toggleProjectList: () => {
+      dispatch(userActionCreator.toggleProjectList())
+    },
     showProjectList: () => {     
       dispatch(userActionCreator.showProjectList())
+    },
+    hideProjectList: () => {
+      dispatch(userAtionCreator.hideProjectList())
     }
   }
 }

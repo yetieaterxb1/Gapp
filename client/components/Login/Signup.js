@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
-import { useCookies } from 'react-cookie'
 
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -45,7 +44,7 @@ class Login extends Component {
 
   handleEnter(e){
     if (e.key === 'Enter') {
-      this.props.submitLogin()
+      this.props.submitSignup()
     }
   }
 
@@ -62,11 +61,12 @@ class Login extends Component {
             <Card onKeyPress={ this.handleEnter } className={classes.card} >
               <CardContent >
                 <AccountBoxIcon style={{float: 'right'}}/>
-                <TextField id='username' label='Username'  autoComplete='username' margin='normal' />
-                <TextField id='password' label='Password' type='password' autoComplete='current-password' margin='normal' />
+                <TextField id='email' label='Email' autoComplete='email' margin='normal' />
+                <TextField id='username' label='Username' autoComplete='username' margin='normal' />
+                <TextField id='password' label='Password' autoComplete='new-password' type='password' margin='normal' />
               </CardContent>
               <CardActions>
-                <Button className={classes.button} onClick={ this.props.submitLogin } variant='contained' size="small"> Submit </Button>
+                <Button className={classes.button} onClick={ this.props.submitSignup } variant='contained' size="small"> Submit </Button>
               </CardActions>
             </Card>
             <p style={ {color: 'tomato'} }>{ this.props.message }</p>
@@ -81,6 +81,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     open: state.login.open,
     isAuthenticated: state.login.isAuthenticated,
+    cookies: ownProps.cookies,
     message: state.login.message,
     isLoading: state.login.isLoading,
     cookies: ownProps.cookies
@@ -89,9 +90,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    submitLogin: () => {
+    submitSignup: () => {
       const cookies = ownProps.cookies
-      dispatch(loginActionCreator.submitLogin(cookies))
+      dispatch(loginActionCreator.submitSignup(cookies))
     },
     stopLoading: () => {
       dispatch(loginActionCreator.stopLoading())

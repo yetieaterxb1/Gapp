@@ -8,7 +8,6 @@ export default function ProjectPanel() {
     <React.Fragment>
       <Container maxWidth="xl">
         <Typography component="div" style={{ backgroundColor: '#cfe8fc', height: '100vh' }} />
-        <p> Continer </p>
       </Container>
     </React.Fragment>
   )

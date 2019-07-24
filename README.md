@@ -4,20 +4,20 @@ The directions below describe all steps needed to install and run the app.
 
 Note: 
   
-1. The app requires NodeJS and `npm` to be installed.
-    * https://nodejs.org/en/download/
+* The app requires NodeJS and `npm` to be installed.
+    - https://nodejs.org/en/download/
 
-2. The app depends on a local installation of MongoDB.
-    * https://gist.github.com/nrollr/9f523ae17ecdbb50311980503409aeb3
+* The app depends on a local installation of MongoDB.
+    - https://gist.github.com/nrollr/9f523ae17ecdbb50311980503409aeb3
 
-## 1 Installation
+## 1. Installation
 Navigate into the app directory and run the following command.
 
 ```
 npm install
 ```
 
-## 2 Start a mongod process
+## 2. Start a mongod process
 Enter the following command to start the MongoDB server.
 
 ```
@@ -26,7 +26,7 @@ mongod
 
 Close the terminal window after you run `mongod` and open a new terminal window to run the next commands.
 
-## 3 Start the Node server
+## 3. Start the Node server
 You can choose to start in either production or development mode. Choose from one of the following options.
 
 #### 3.1 In development mode (recommended)

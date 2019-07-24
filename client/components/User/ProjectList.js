@@ -18,8 +18,8 @@ class ProjectList extends Component {
   }
   render() {
     return (
-      <Slide in={ this.props.showProjectList } direction='right'>
-        <List >
+      <Slide in={ this.props.showProjectList } direction='right' mountOnEnter unmountOnExit>
+        <List style={ {display: this.props.showProjectList? 'initial':'none'} }>
           <ListItem>
             <ListItemAvatar>
               <Avatar>
