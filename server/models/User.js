@@ -34,9 +34,8 @@ const UserSchema = new Schema({
     data: Buffer,
     contentType: String
   },
-  models: {
+  projects: {
     type: Array
-
   }
 })
 

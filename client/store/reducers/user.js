@@ -2,7 +2,8 @@ const INIT_STATE = {
   profile: {
     test: 'test'
   },
-  showProjectList: false
+  showProjectList: false,
+  showNewProjectModal: false
 }
 
 const userReducer = (state=INIT_STATE, action) => {
@@ -24,6 +25,12 @@ const userReducer = (state=INIT_STATE, action) => {
     }
     case 'HIDE_PROJECTLIST':{
       return Object.assign({}, state, { showProjectList: false })
+    }
+    case 'TOGGLE_NEWPROJECTMODAL': {
+      return Object.assign({}, state, { showNewProjectModal: !state.showNewProjectModal })
+    }
+    case 'CLOSE_NEWPROJECTMODAL': {
+      return Object.assign({}, state, { showNewProjectModal: false })
     }
     default:
       return state

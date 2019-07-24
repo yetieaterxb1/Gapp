@@ -3,6 +3,9 @@ const GET_PROFILE = 'GET_PROFILE'
 const TOGGLE_PROJECTLIST = 'TOGGLE_PROJECTLIST'
 const SHOW_PROJECTLIST = 'SHOW_PROJECTLIST'
 const HIDE_PROJECTLIST = 'HIDE_PROJECTLIST'
+const CREATE_NEWPROJECT = 'CREATE_NEWPROJECT'
+const TOGGLE_NEWPROJECTMODAL = 'TOGGLE_NEWPROJECTMODAL'
+const CLOSE_NEWPROJECTMODAL = 'CLOSE_NEWPROJECTMODAL'
 
 const userActionCreator = {
   onChange: (e) => {
@@ -45,6 +48,22 @@ const userActionCreator = {
   hideProjectList: () => {
     return (dispatch, getState) => {
       dispatch({ type: HIDE_PROJECTLIST })
+    }
+  },
+  createNewProject: () => {
+    return (dispatch, getState) => {
+      console.log(projectname.value)
+      dispatch({ type: CLOSE_NEWPROJECTMODAL })
+    }
+  },
+  toggleNewProjectModal: () => {
+    return (dispatch, getState) => {
+      dispatch({ type: TOGGLE_NEWPROJECTMODAL})
+    }
+  },
+  closeNewProjectModal: () => {
+    return (dispatch, getState) => {
+      dispatch({ type: CLOSE_NEWPROJECTMODAL})
     }
   }
 }

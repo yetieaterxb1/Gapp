@@ -9,6 +9,8 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
+import Fab from '@material-ui/core/Fab'
+import AddIcon from '@material-ui/icons/Add'
 
 import { connect } from 'react-redux'
 
@@ -29,7 +31,7 @@ const styles = {
 }
 
 function ButtonAppBar(props) {
-  const { submitLogout, toggleProjectList, username, classes } = props
+  const { submitLogout, toggleNewProjectModal, toggleProjectList, username, classes } = props
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -37,6 +39,9 @@ function ButtonAppBar(props) {
           <IconButton className={classes.menuButton} onClick={toggleProjectList} color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
+          <Fab onClick={toggleNewProjectModal} color="primary" aria-label="Add">
+            <AddIcon />
+          </Fab>
           <Typography variant="h6" color="inherit" className={classes.grow}>
             { username }
           </Typography>
@@ -64,6 +69,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     submitLogout: () => {      
       const cookies = ownProps.cookies
       dispatch(loginActionCreator.submitLogout(cookies))
+    },
+    toggleNewProjectModal: () => {
+      dispatch(userActionCreator.toggleNewProjectModal())
     },
     toggleProjectList: () => {
       dispatch(userActionCreator.toggleProjectList())

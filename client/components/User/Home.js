@@ -4,10 +4,11 @@ import { connect } from 'react-redux'
 
 import Grid from '@material-ui/core/Grid'
 
-import Appbar from '../Common/Appbar'
+import Appbar from './Appbar'
 import Loader from '../Common/Loader'
 import ProjectList from './ProjectList'
 import ProjectPanel from './ProjectPanel'
+import NewProjectModal from './NewProjectModal'
 
 import loginActionCreator from '../../store/actions/login.js'
 import userActionCreator from '../../store/actions/user.js'
@@ -24,6 +25,11 @@ class Home extends Component {
     this.props.checkAuth()
     this.props.getProfile()
   }
+  componentDidMount() {
+    this.props.closeNewProjectModal()
+    this.props.checkAuth()
+    this.props.getProfile()
+  }
   render() {
     if(!this.props.isAuthenticated){
       return <Redirect to='/login'/>
@@ -32,6 +38,7 @@ class Home extends Component {
       <>
         <Loader display={this.props.isLoading}/>
         <div>
+          <NewProjectModal />
           <Appbar cookies={this.props.cookies} />
           <Grid container direction='row' alignItems='flex-start' spacing={3}>
               <Grid item xs={3} >
@@ -56,7 +63,8 @@ const mapStateToProps = (state, ownProps) => {
     message: state.login.isAuthenticated,
     isLoading: state.login.isLoading,
     cookies: ownProps.cookies,
-    showProjectList: state.user.showProjectList
+    showProjectList: state.user.showProjectList,
+    currentProject: state.user.currentProject
   }
 }
 
@@ -73,6 +81,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     },
     checkAuth: () => {
       dispatch(loginActionCreator.checkAuth(ownProps.cookies))
+    },
+    closeNewProjectModal: () => {
+      dispatch(userActionCreator.closeNewProjectModal())
     }
   }
 }
