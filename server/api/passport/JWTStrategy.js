@@ -39,9 +39,10 @@ exports.Strategy = [
 ]
 
 
-exports.signJWT = function(user, secret = config.jwt.secret, otps = config.jwt.opts){
+exports.signJWT = function(user, secret = config.jwt.secret, opts = config.jwt.opts){
   const payload = {
     id: user._id,
+    expires: opts.expires
   }
   return new Promise(function(resolve, reject){
     jwt.sign(payload, secret,
@@ -59,9 +60,4 @@ exports.signJWT = function(user, secret = config.jwt.secret, otps = config.jwt.o
   })
 }
 
-
-
-// exports.authenticateJWT = function(req, res, next){
-//   return passport.authenticate('jwt', {session: false})(req, res, next)
-// }
 

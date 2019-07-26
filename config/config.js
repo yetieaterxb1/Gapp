@@ -28,12 +28,13 @@ module.exports = {
   },
   jwt: {
     opts:{
-      expiresIn: 60000,
+      expires: Math.round((new Date().getTime())) + 30000
+      // expires: 3600
     },
     secret: JWT_SECRET
   },
   db: {
-    URI: 'mongodb://localhost/users',
+    URI: 'mongodb://localhost/Gapp',
     connectionOpts: {
       useNewUrlParser: true, 
       useCreateIndex: true

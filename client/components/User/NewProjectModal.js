@@ -17,7 +17,6 @@ const styles = {
     maxWidth: 345,
     marginTop: 200,
     margin: 'auto',
-    // backgroundColor: 'white'
   },
   icon: {
     float: 'right'
