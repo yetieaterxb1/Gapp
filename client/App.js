@@ -17,13 +17,13 @@ class App extends Component {
   render() {
     return (
       <CookiesProvider>
-        <Provider store={store}>
+        <Provider store={ store }>
           <HashRouter basename='/'>
             <Switch >
-              <Route exact path='/' component={withCookies(Splash)}/>
-              <Route path='/login' component={withCookies(Login)}/>
-              <Route path='/signup' component={withCookies(Signup)}/>
-              <Route path='/user' component={withCookies(Home)}/>
+              <Route exact path='/' component={ withCookies(Splash) } />
+              <Route path='/login' component={ withCookies(Login) } />
+              <Route path='/signup' component={ withCookies(Signup) } />
+              <Route path='/user' component={ withCookies(Home) } />
             </Switch>
           </HashRouter>
         </Provider>
@@ -32,7 +32,7 @@ class App extends Component {
   }
 }
 
-ReactDOM.render(<App/>, document.getElementById('app'))
+ReactDOM.render(<App />, document.getElementById('app'))
 
 if (module.hot) {
   module.hot.accept('./App.js')

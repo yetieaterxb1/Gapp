@@ -1,26 +1,5 @@
 import React, { Component } from 'react'
 
-class cube extends Component{
-  render(){
-    return(
-      <div className="container">
-        <div className="cube">
-          <div className="half1">
-            <div className="side s1"></div>
-            <div className="side s2"></div>
-            <div className="side s5"></div>
-          </div>
-          <div className="half2">
-            <div className="side s3"></div>
-            <div className="side s4"></div>
-            <div className="side s6"></div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-}
-
 class Whirlpool extends Component{
   render(){
     return(
@@ -38,9 +17,6 @@ class Whirlpool extends Component{
     )
   }
 }
-
-
-
 
 export default class Loader extends Component {
   constructor(props){

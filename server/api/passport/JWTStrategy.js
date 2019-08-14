@@ -1,43 +1,40 @@
-const JwtStrategy = require('passport-jwt').Strategy,
-      ExtractJwt = require('passport-jwt').ExtractJwt
 const jwt = require('jsonwebtoken')
-const User = require('../../models/User')
+const JwtStrategy = require('passport-jwt').Strategy
+const ExtractJwt = require('passport-jwt').ExtractJwt
+
+const User = require('../../models/User.js')
 
 const config = require('../../../config/config.js')
 
 const cookieExtractor = function(req) {
-  var token = null;
-  if (req && req.cookies) token = req.cookies['jwt'];
+  let token = null
+  if (req && req.cookies) token = req.cookies['jwt']
   return token;
-};
+}
 
 const opts = config.passport.jwt
-opts.jwtFromRequest = ExtractJwt.fromExtractors([ExtractJwt.fromHeader('authorization'), cookieExtractor])
-
+opts.jwtFromRequest = ExtractJwt.fromExtractors([ ExtractJwt.fromHeader('authorization'), cookieExtractor ])
 exports.Strategy = [
   'jwt',
   new JwtStrategy(
     opts,
     function(jwt_payload, done){
-      User.findOne({id: jwt_payload.id}, function(err, user) {
+      User.findOne({ _id: jwt_payload.id }, function(err, user) {
         if (err) {
-            return done(err, false)
+          return done(err, false)
         }
         if (user) {
           if (Date.now() > jwt_payload.expires) {
-            return done('jJWT expired.')
+            return done('JWT expired.', false)
           }
           return done(null, user)
         } else {
-            // Or create a new account
-            return done(null, false)
+          return done(null, false)
         }
       })
-      
     }
   )
 ]
-
 
 exports.signJWT = function(user, secret = config.jwt.secret, opts = config.jwt.opts){
   const payload = {

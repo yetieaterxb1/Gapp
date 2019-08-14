@@ -13,17 +13,9 @@ import NewProjectModal from './NewProjectModal'
 import loginActionCreator from '../../store/actions/login.js'
 import userActionCreator from '../../store/actions/user.js'
 
-const styles = {
-  
-}
-
 class Home extends Component {
   constructor(props){
     super(props)
-  }
-  componentDidMount() {
-    this.props.checkAuth()
-    this.props.getProfile()
   }
   componentDidMount() {
     this.props.closeNewProjectModal()
@@ -31,21 +23,27 @@ class Home extends Component {
     this.props.getProfile()
   }
   render() {
-    if(!this.props.isAuthenticated){
-      return <Redirect to='/login'/>
+    const {
+      cookies,
+      isAuthenticated, 
+      isLoading,
+      showProjectList
+    } = this.props
+    if(!isAuthenticated){
+      return <Redirect to='/login' />
     }
     return (
       <>
-        <Loader display={this.props.isLoading}/>
+        <Loader display={ isLoading } />
         <div>
           <NewProjectModal />
-          <Appbar cookies={this.props.cookies} />
+          <Appbar cookies={ cookies } />
           <Grid container direction='row' alignItems='flex-start' spacing={3}>
-              <Grid item xs={3} >
-                <ProjectList />
+              <Grid item xs={ 3 } >
+                <ProjectList cookies={ cookies } />
               </Grid>
-            <Grid item xs={ this.props.showProjectList? 9:12}>
-              <ProjectPanel />
+            <Grid item xs={ showProjectList ? 9:12 }>
+              <ProjectPanel cookies={ cookies } />
             </Grid>
           </Grid>
         </div>

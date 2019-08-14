@@ -9,8 +9,11 @@ const logout = require('../controllers/auth.js').logout
 const router = express.Router()
 
 router.route('/login')
-  .get(function(req,res){ res.redirect('/#/login') })
-  .post(passport.authenticate('local', { session:false }), login)
+  .get(function(req, res){ res.redirect('/#/login') })
+  .post(
+    passport.authenticate('local', { session:false }), 
+    login
+  )
 
 router.route('/logout')
   .get(logout)

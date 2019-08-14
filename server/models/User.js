@@ -4,7 +4,25 @@ const Schema = mongoose.Schema
 
 const SALT_ROUNDS = 5
 
-const UserSchema = new Schema({
+const _projectSchema = new Schema({
+  name: {
+    type: String,
+    trim: true,
+    required: true
+  },
+  likedIds: {
+    type: Array,
+    default: []
+  },
+  created: {
+    type: Date
+  },
+  updated: {
+    type: Date
+  }
+})
+
+const userSchema = new Schema({
   username: {
     type: String,
     lowercase: true,
@@ -21,7 +39,7 @@ const UserSchema = new Schema({
     type: String,
     trim: true,
     unique: 'Email already exists',
-    match: [/.+\@.+\..+/, 'Please fill a valid email address'],
+    match: [/.+\@.+\..+/, 'Please enter a valid email address'],
     required: false
     // required: 'Email is required'
   },
@@ -34,12 +52,10 @@ const UserSchema = new Schema({
     data: Buffer,
     contentType: String
   },
-  projects: {
-    type: Array
-  }
+  projects: [ _projectSchema ]
 })
 
-UserSchema
+userSchema
   .virtual('password')
   .set(function(password) {
     this.password_hash = this.encryptPassword(password)
@@ -48,7 +64,7 @@ UserSchema
     return this.password_hash
   })
 
-UserSchema.methods = {
+userSchema.methods = {
   authenticate: function(hash) {
     return bcrypt.compare(hash, this.password)
   },
@@ -62,4 +78,8 @@ UserSchema.methods = {
   }
 }
 
-module.exports = mongoose.model('User', UserSchema)
+const User = mongoose.model('User', userSchema)
+
+module.exports = User
+
+

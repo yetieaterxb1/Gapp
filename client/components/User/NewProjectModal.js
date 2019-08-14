@@ -28,18 +28,23 @@ class NewProjectModal extends Component {
     super(props)
   }
   render() {
-    const { classes } = this.props
+    const { 
+      classes,
+      showNewProjectModal,
+      toggleNewProjectModal,
+      createNewProject
+    } = this.props
     return (
-      <Modal open={this.props.showNewProjectModal} onClose={this.props.toggleNewProjectModal} aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description">
-          <Card onKeyPress={ this.handleEnter } className={classes.modal} >
-            <CardContent >
-              <InputIcon className={classes.icon}/>
-              <TextField id='projectname' label='New Project Name'  />
-            </CardContent>
-            <CardActions>
-              <Button onClick={ this.props.createNewProject } variant='contained' size="small"> Create </Button>
-            </CardActions>
-          </Card>
+      <Modal open={ showNewProjectModal } onClose={ toggleNewProjectModal } aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" >
+        <Card onKeyPress={ this.handleEnter } className={ classes.modal } >
+          <CardContent >
+            <InputIcon className={ classes.icon }/>
+            <TextField id='projectname' label='New Project Name' />
+          </CardContent>
+          <CardActions>
+            <Button onClick={ createNewProject } variant='contained' size="small"> Create </Button>
+          </CardActions>
+        </Card>
       </Modal>
     )
   }

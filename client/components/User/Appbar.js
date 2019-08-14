@@ -24,6 +24,12 @@ const styles = {
   grow: {
     flexGrow: 1,
   },
+  addFab: {
+    position: 'absolute',
+    marginTop: '3.5%',
+    marginLeft: 50,
+
+  },
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
@@ -31,31 +37,32 @@ const styles = {
 }
 
 function ButtonAppBar(props) {
-  const { submitLogout, toggleNewProjectModal, toggleProjectList, username, classes } = props
+  const { 
+    classes,
+    username,
+    submitProject, 
+    submitLogout, 
+    toggleNewProjectModal, 
+    toggleProjectList
+  } = props
   return (
-    <div className={classes.root}>
+    <div className={ classes.root }>
       <AppBar position="static">
         <Toolbar>
-          <IconButton className={classes.menuButton} onClick={toggleProjectList} color="inherit" aria-label="Menu">
+          <IconButton className={ classes.menuButton } onClick={ toggleProjectList } color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
-          <Fab onClick={toggleNewProjectModal} color="primary" aria-label="Add">
+          <Fab className={ classes.addFab } onClick={ toggleNewProjectModal } color="secondary" aria-label="Add">
             <AddIcon />
           </Fab>
-          <Typography variant="h6" color="inherit" className={classes.grow}>
-            { username }
-          </Typography>
-          <Button color="inherit" onClick={submitLogout}>Logout</Button>
+          <Typography variant="h6" color="inherit" className={ classes.grow }> { username } </Typography>
+          <Button color='inherit' onClick={ submitProject }> Submit </Button>
+          <Button color='inherit' onClick={ submitLogout }> Logout </Button>
         </Toolbar>
       </AppBar>
     </div>
   )
 }
-
-ButtonAppBar.propTypes = {
-  classes: PropTypes.object.isRequired,
-}
-
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -69,6 +76,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     submitLogout: () => {      
       const cookies = ownProps.cookies
       dispatch(loginActionCreator.submitLogout(cookies))
+    },
+    submitProject: (id) => {
+      dispatch(userActionCreator.submitProject(id))
     },
     toggleNewProjectModal: () => {
       dispatch(userActionCreator.toggleNewProjectModal())

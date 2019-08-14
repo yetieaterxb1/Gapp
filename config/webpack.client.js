@@ -31,7 +31,8 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          { loader: 'style-loader/url' }, { loader: 'file-loader' }
+          { loader: 'style-loader/url' }, 
+          { loader: 'file-loader' }
         ]
       }
     ]
@@ -63,7 +64,7 @@ module.exports = {
       filename: 'service-worker.js',
       logger(message) {
         if (message.indexOf('Total precache size is') === 0) {
-          return
+          return null
         }
       },
       minify: true,

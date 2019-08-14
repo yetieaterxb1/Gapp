@@ -1,8 +1,4 @@
 const INIT_STATE = {
-  credentials:{
-    username: 'admin',
-    password: 'password',
-  },
   jwt: null,
   isAuthenticated: false,
   message: false,
@@ -14,7 +10,7 @@ const loginReducer = (state=INIT_STATE, action) => {
     case 'ON_CHANGE':{
       const id = action.event.target.id
       const value = action.event.target.value
-      return Object.assign({}, state, { credentials:{ [id]:value }})
+      return Object.assign({}, state, { credentials: { [id]:value }})
     }
     case 'STOP_LOADING':{
       return Object.assign({}, state, { isLoading: false })
@@ -26,11 +22,11 @@ const loginReducer = (state=INIT_STATE, action) => {
     case 'LOGIN_SUCCESS':{
       console.log('LOGIN_SUCCESS')
       const { jwt, username, message } = action
-      return Object.assign({}, state, { jwt: jwt, username: username, isAuthenticated: true, isLoading: false, message: message })
+      return Object.assign({}, state, { jwt: jwt.token, username: username, isAuthenticated: jwt.success, isLoading: false, message: message })
     }
     case 'LOGIN_FAIL':{
       console.log('LOGIN_FAIL')
-      const message = action.message
+      const { message } = action
       return Object.assign({}, state, { isAuthenticated: false, isLoading: false, message: message }) 
     }
     case 'SUBMIT_LOGOUT':{
@@ -38,17 +34,18 @@ const loginReducer = (state=INIT_STATE, action) => {
       return Object.assign({}, state, { jwt: null, isAuthenticated: false, isLoading: true })
     }
     case 'LOGOUT_SUCCESS':{
-      const message = action.message
       console.log('LOGOUT_SUCCESS')
+      const { message } = action
       return Object.assign({}, state, { jwt: null, isAuthenticated: false, isLoading: false, message: message })
     }
     case 'LOGOUT_FAIL':{
       console.log('LOGOUT_FAIL')
-      const message = action.message
+      const { message } = action
       return Object.assign({}, state, { isAuthenticated: true, isLoading: false, message: message }) 
     }
     case 'IS_AUTHED':{
-      return Object.assign({}, state, { isAuthenticated: action.isAuthenticated })
+      const { isAuthenticated } = action
+      return Object.assign({}, state, { isAuthenticated })
     }
     default:
       return state

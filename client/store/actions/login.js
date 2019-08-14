@@ -1,3 +1,5 @@
+const config = require('../../../config/config.js')
+
 const SUBMIT_LOGIN = 'SUBMIT_LOGIN'
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 const LOGIN_FAIL = 'LOGIN_FAIL'
@@ -12,7 +14,7 @@ const STOP_LOADING = 'STOP_LOADING'
 const loginActionCreator = {
   onChange: (e) => {
     return (dispatch, getState) => {
-      dispatch({ type: ON_CHANGE, event: e})
+      dispatch({ type: ON_CHANGE, event: e })
     }
   },
   stopLoading: () => {
@@ -23,10 +25,9 @@ const loginActionCreator = {
   submitLogin : (cookies) => {
     return (dispatch, getState) => {
       if(username.value && password.value){
-        dispatch({type: SUBMIT_LOGIN})
-        fetch('http://localhost:8000/login', {
+        dispatch({ type: SUBMIT_LOGIN })
+        fetch(config.api.path.root + '/login', {
           method: 'POST',
-          mode: 'cors',
           body: JSON.stringify({
             username: username.value,
             password: password.value
@@ -37,7 +38,7 @@ const loginActionCreator = {
         })
         .then((res) => {
           if (res.status === 401){
-            return {message: 'Invalid username / password.'}
+            return { message: 'Invalid username / password.' }
           }else{
             return res.json()
           }
@@ -45,15 +46,15 @@ const loginActionCreator = {
         .then((data) => {
           const { jwt, isAuthenticated, message } = data
           if(isAuthenticated){
-            cookies.set('jwt', jwt.token, { path: '/' }) // Set cookie so that requests to non-hashed routes can be authenticated
+            cookies.set('jwt', jwt.token, { path: '/' })
             setTimeout(function(){
               dispatch({
                 type: LOGIN_SUCCESS,
-                jwt: jwt, // JWTStrategy can extract tokens from both cookies and headers
+                jwt: jwt,
                 username: data.username,
                 message: message
               })
-            },3500)
+            }, 1000)
           }else{
             dispatch({
               type: LOGIN_FAIL,
@@ -67,13 +68,12 @@ const loginActionCreator = {
   submitLogout: function(cookies){
     return function(dispatch, getState){
       cookies.set('jwt', null)
-      dispatch({type: SUBMIT_LOGOUT})
-      fetch('http://localhost:8000/logout')
+      dispatch({ type: SUBMIT_LOGOUT })
+      fetch(config.api.path.root + '/logout')
       .then((res) => {
         if (res.status === 401){
           return dispatchI({type: LOGOUT_FAIL, message: 'Unable to logout'})
         }else{
-          res = res.json()
           return dispatch({type: LOGOUT_SUCCESS, message: 'Logout successful.'}) 
         }
       })
@@ -82,10 +82,9 @@ const loginActionCreator = {
   submitSignup: function(cookies){
     return function(dispatch, getState){
       if(username.value && password.value && email.value){
-        dispatch({type: SUBMIT_SIGNUP})
-        fetch('http://localhost:8000/signup', {
+        dispatch({ type: SUBMIT_SIGNUP })
+        fetch(config.api.path.root + '/signup', {
           method: 'POST',
-          mode: 'cors',
           body: JSON.stringify({
             email: email.value,
             username: username.value,
@@ -107,7 +106,7 @@ const loginActionCreator = {
                 username: data.username,
                 message: message
               })
-            },3500)
+            }, 1000)
           }else{
             dispatch({
               type: LOGIN_FAIL,
@@ -120,9 +119,9 @@ const loginActionCreator = {
   },
   checkAuth: (cookies) => {
     return (dispatch, getState) => {
-      const jwt = cookies.get('jwt') || getState().login.jwt.token
+      const jwt = cookies.get('jwt') || getState().login.jwt
       if(jwt){
-        fetch('http://localhost:8000/user', {
+        fetch(config.api.path.root + '/user', {
           method: 'POST',
           credentials: 'same-origin',
           body: JSON.stringify({

@@ -1,3 +1,6 @@
+// TODO::
+// // - Just move this to config.js
+
 let expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 const genuuid = require('uid-safe')
 const randomstring = require('randomstring')
@@ -7,7 +10,7 @@ module.exports = function(mongoose, mongoStore){
     {
       secret: randomstring.generate(),
       genid: function(req) {
-        return genuuid(10) // use UUIDs for session IDs
+        return genuuid(10) 
       },
       resave: false,
       saveUninitialized: true,
@@ -16,7 +19,7 @@ module.exports = function(mongoose, mongoStore){
       },
       store: new mongoStore({
         mongooseConnection: mongoose.connection,
-        collection: 'sessions' // default
+        collection: 'sessions'
       })
     }
   )

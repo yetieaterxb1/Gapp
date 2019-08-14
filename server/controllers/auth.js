@@ -1,16 +1,9 @@
 const User = require('../models/User')
 
 function login(req, res, next){
-  const userCreds = {
-    username: req.body.username,
-    password: req.body.password
-  }
-  req.login(userCreds, function(err){
-    const isAuthed = req.isAuthenticated()
-    if(err){
-      next(err)
-    }else if(isAuthed){
-      req.signJWT(req.user)
+  const isAuthed = req.isAuthenticated()
+  if(isAuthed){
+    req.signJWT(req.user)
       .then(function(result){
         const response = {
           jwt: result,
@@ -19,28 +12,30 @@ function login(req, res, next){
           message: 'Login successful.'
         }
         if(result.error){
-          res.status(500).json(response) // User is logged in but cant be tokenized...?
+          res.status(500).json(response) 
         }else{
           res.status(200).json(response)
         }
-      }).catch(function(err){ console.error(err) })
-    }else{
-      res.status(401).send({
-        jwt: null,
-        isAuthenticated: isAuthed,
-        message: 'Incorrect username or password.'
       })
-    }
-  })
+      .catch(function(err){ 
+        res.status(500).send()
+      })
+  }else{
+    res.status(401).send({
+      jwt: null,
+      isAuthenticated: isAuthed,
+      message: 'Incorrect username or password.'
+    })
+  }
 }
 
 function logout(req, res, next){
   req.logout()
   const isAuthed = req.isAuthenticated()
   if(isAuthed){
-    res.status(500).json({isAuthentiated: isAuthed, message: 'Logout NOT successful.'})
+    res.status(500).json({ isAuthentiated: isAuthed, message: 'Logout NOT successful.' })
   }else{
-    res.status(205).json({isAuthentiated: isAuthed, message: 'Logout successful.'})
+    res.status(205).json({ isAuthentiated: isAuthed, message: 'Logout successful.' })
   }
 }
 
@@ -71,20 +66,22 @@ function signup(req,res,next){
                   message: 'Signup successful.'
                 }
                 if(result.error){
-                  res.status(500).json(response) // User is signed up but cant be tokenized...?
+                  res.status(500).json(response)
                 }else{
                   res.status(200).json(response)
                 }
-              }).catch(function(err){ console.error(err) })
+              }).catch(function(err){ 
+                res.status(500).send()
+              })
             }
           })
         }else{
-          res.status(200).json({message: 'Signup unsuccessful.'})
+          res.status(200).json({ message: 'Signup unsuccessful.' })
         }
       })  
     }else{
       const clash = creds.email === user.email ? 'email' : 'username'
-      res.status(409).json({clash: clash, message: 'That ' + clash  + ' already exists'})
+      res.status(409).json({ message: 'That ' + clash  + ' already exists' })
     }
   })
 }

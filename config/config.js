@@ -1,6 +1,6 @@
 const path = require('path')
 
-const root = process.cwd()
+const root = path.resolve(__dirname + '/../')
 
 const JWT_SECRET = 'secret'
 
@@ -8,18 +8,20 @@ module.exports = {
   root: root,
   port: 8000,
   static: {
-    dir: path.join(root, '/dist/public'),
-    // options: {
-    //   dotfiles: 'ignore',
-    //   etag: false,
-      index: 'index.html',
-    //   maxAge: '1d',
-      redirect: false,
-      fallthrough: false,
-    //   setHeaders: function (res, path, stat) {
-    //     res.set('x-timestamp', Date.now())
-    //   }
-    // }
+    dir:'./dist/public',
+    index: 'index.html',
+    redirect: false,
+    fallthrough: false
+  },
+  api: {
+    path: {
+      root: 'http://localhost:8000'
+    }
+  },
+  budr: {
+    path: {
+      rpath: './server/api/budr/src/cli.R'
+    }
   },
   passport: {
     jwt: {
@@ -28,8 +30,7 @@ module.exports = {
   },
   jwt: {
     opts:{
-      expires: Math.round((new Date().getTime())) + 30000
-      // expires: 3600
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) * 10000000000
     },
     secret: JWT_SECRET
   },

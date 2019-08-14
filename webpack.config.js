@@ -1,6 +1,6 @@
+const webpack = require('webpack')
+const webpackDevServer = require('webpack-dev-server')
 
-const webpack = require('webpack');
-const webpackDevServer = require('webpack-dev-server');
 
 const NODE_ENV = process.env.NODE_ENV
 const DEV_ENV = process.env.DEV_ENV
@@ -24,8 +24,8 @@ if(DEV_ENV == 'true'){
   const compiler = webpack(config)
   const devServer = new webpackDevServer(compiler, options)
 
-  devServer.listen(5000, 'localhost', () => {
-    ('dev server listening on port 5000');
+  devServer.listen(5000, 'localhost', function(){
+    console.log('dev server listening on port 5000')
   })
 }
 

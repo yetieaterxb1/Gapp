@@ -13,9 +13,7 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 
-
 import Loader from '../Common/Loader'
-
 
 import loginActionCreator from '../../store/actions/login.js'
 
@@ -29,6 +27,9 @@ const styles = {
   },
   button: {
     backgroundColor: 'white'
+  },
+  accountBoxIcon: {
+    float: 'right'
   }
 }
 
@@ -50,26 +51,33 @@ class Login extends Component {
   }
 
   render() {
-    const { classes } = this.props
-    if(this.props.isAuthenticated){
+    const { 
+      classes,
+      message,
+      isAuthenticated,
+      isLoading,
+      submitLogin
+    } = this.props
+    if( isAuthenticated ){
       return <Redirect to='/user'/>
     }
     return (
       <>
-        <Loader display={this.props.isLoading}/>
-        <Grid container className={classes.grid} justify='center' >
-          <span style={{display: this.props.isLoading ? 'none' : 'initial'}} >
-            <Card onKeyPress={ this.handleEnter } className={classes.card} >
+        <Loader display={ isLoading }/>
+        <Grid container className={ classes.grid } justify='center' >
+          <span style={ {display: isLoading ? 'none' : 'initial'} } >
+            <Card onKeyPress={ this.handleEnter } className={ classes.card } >
               <CardContent >
-                <AccountBoxIcon style={{float: 'right'}}/>
+                {/* <AccountBoxIcon style={ {float: 'right'} }/> */}
+                <AccountBoxIcon className={ classes.accountBoxIcon }/>
                 <TextField id='username' label='Username'  autoComplete='username' margin='normal' />
                 <TextField id='password' label='Password' type='password' autoComplete='current-password' margin='normal' />
               </CardContent>
               <CardActions>
-                <Button className={classes.button} onClick={ this.props.submitLogin } variant='contained' size="small"> Submit </Button>
+                <Button className={classes.button} onClick={ submitLogin } variant='contained' size="small"> Submit </Button>
               </CardActions>
             </Card>
-            <p style={ {color: 'tomato'} }>{ this.props.message }</p>
+            <p style={ {color: 'tomato'} }>{ message }</p>
           </span>
         </Grid>
       </>

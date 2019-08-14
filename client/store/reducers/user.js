@@ -1,24 +1,30 @@
 const INIT_STATE = {
   profile: {
-    test: 'test'
+    projects: []
   },
+  currentProject: false,
   showProjectList: false,
-  showNewProjectModal: false
+  showNewProjectModal: false,
+  strainData: {
+    raw: [],
+    colNames: [],
+    rows: []
+  }
 }
 
 const userReducer = (state=INIT_STATE, action) => {
   switch (action.type) {
     case 'ON_CHANGE':{
-      const id = action.event.target.id
-      const value = action.event.target.value
+      const { id, value } = action.event.target
       return Object.assign({}, state, { credentials:{ [id]:value }})
     }
     case 'GET_PROFILE':{
-      const profile = action.profile
+      const { profile } = action
       return Object.assign({}, state, { profile: profile })
     }
     case 'TOGGLE_PROJECTLIST':{
-      return Object.assign({}, state, { showProjectList: !state.showProjectList })
+      const { showProjectList } = state
+      return Object.assign({}, state, { showProjectList: !showProjectList })
     }
     case 'SHOW_PROJECTLIST':{
       return Object.assign({}, state, { showProjectList: true })
@@ -27,10 +33,39 @@ const userReducer = (state=INIT_STATE, action) => {
       return Object.assign({}, state, { showProjectList: false })
     }
     case 'TOGGLE_NEWPROJECTMODAL': {
-      return Object.assign({}, state, { showNewProjectModal: !state.showNewProjectModal })
+      const { showNewProjectModal } = state
+      return Object.assign({}, state, { showNewProjectModal: !showNewProjectModal })
     }
     case 'CLOSE_NEWPROJECTMODAL': {
       return Object.assign({}, state, { showNewProjectModal: false })
+    }
+    case 'OPEN_PROJECT': {
+      const { projectId } = action
+      return Object.assign({}, state, { currentProject: projectId })
+    }
+    case 'CREATE_NEWPROJECT': {
+      return Object.assign({}, state, { projectListIsLoading: true })
+    }
+    case 'UPDATE_PROJECTLIST': {
+      const { projectList } = action
+      return Object.assign({}, state, { profile: { projects: projectList }, projectListIsLoading: false })
+    }
+    case 'GET_ALLSTRAINS': {
+      const { strainData } = action
+      return Object.assign({}, state, { strainData })
+    }
+    case 'ADD_IDTOPROJECT': {
+      const { profile, currentProject } = state
+      const currentIdx = profile.projects.map((item) => {
+        return item._id === currentProject
+      }).findIndex(check => !!check)
+      const updatedProjects = profile.projects
+      updatedProjects[currentIdx].likedIds.push(action.id)
+      return Object.assign({}, state, { profile: { projects: updatedProjects }})
+    }
+    case 'SUBMIT_PROJECT': {
+      console.log('SUBMIT_PROJECT', action.data)
+      return Object.assign({}, state, {...state})
     }
     default:
       return state

@@ -1,8 +1,21 @@
 const express = require('express')
-const budController = require('../controllers/bud.js').budController
-const isAuthenticated = require('../controllers/auth.js').isAuthenticated
+const passport = require('passport')
+
+const strainController = require('../controllers/bud.js').strainController
+const predictController = require('../controllers/bud.js').predictController
 
 const router = express.Router()
 
-router.route('/api/')
-  .get(budController)
+router.route('/api/strains')
+  .get(
+    passport.authenticate('jwt', { session:false }),
+    strainController
+  )
+
+router.route('/api/predict')
+  .post(
+    passport.authenticate('jwt', { session:false }),
+    predictController
+  )
+
+module.exports = router

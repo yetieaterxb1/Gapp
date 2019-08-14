@@ -6,7 +6,7 @@ module.exports = {
   mode: 'development',
   entry: './server/index.js',
   target: 'node',
-  externals: [nodeExternals()],
+  externals: [ nodeExternals() ],
   output: {
     path: path.join(process.cwd(), '/dist'),
     filename: 'server.bundle.js',

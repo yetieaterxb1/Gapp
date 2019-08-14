@@ -1,0 +1,24 @@
+.table {
+  width: auto;
+  padding-top: 30px;
+}
+
+.headerColumn {
+  display: flex;
+  align-items: center;
+}
+
+.footerControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sortIcon {
+  cursor: pointer;
+}
+
+.sortIcon path {
+  fill: black !important;
+  pointer-events: none;
+}
