@@ -11,7 +11,8 @@ const helmet = require('helmet')
 const cors = require('cors')
 
 const config = require('../config/config')
-const sessionConfig = require('../config/session')
+// const sessionConfig = require('../config/session')
+const sessionConfig = config.passport.session
 
 const app = express()
 
@@ -30,7 +31,7 @@ mongoose.connection.on('error',
   console.error.bind(console, "MongoDB connection error:\r\n")
 )
 
-app.use(session(sessionConfig(mongoose, mongoStore)))
+app.use(session(sessionConfig.init(mongoose, mongoStore)))
 
 passport.serializeUser((user, done) => {
   done(null, user)

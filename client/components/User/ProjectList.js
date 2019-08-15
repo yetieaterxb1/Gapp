@@ -15,56 +15,50 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 import userActionCreator from '../../store/actions/user'
 
-class ProjectList extends Component {
-  constructor(props){
-    super(props)
-    this.generateProjectListItems = this.generateProjectListItems.bind(this)
+const ProjectListItems = (props) => {
+  const { projects, onOpen, onDelete } = props
+  if(!projects.length){
+    return(
+      <ListItem key={ 0 }>
+        Create a Project.
+      </ListItem>
+    )
   }
-  generateProjectListItems(projects, openClickHandler, deleteClickHandler) {
-    projects = projects || []
-    return projects.map(function(proj){
-      return(
-        <ListItem key={ proj._id } onClick={ () => ( openClickHandler(proj._id) ) }>
-          <ListItemAvatar>
-            <Avatar>
-              <FolderIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={ proj.name } secondary={ proj.updated } />
-          <ListItemSecondaryAction>
-            <IconButton edge="end" aria-label="delete" onClick={ () => ( deleteClickHandler(proj._id) ) }>
-              <DeleteIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-      )
-    })
-  }
-  render() {
+  return projects.map((proj) => {
+    return(
+      <ListItem key={ proj._id } onClick={ () => ( onOpen(proj._id) ) }>
+        <ListItemAvatar>
+          <Avatar>
+            <FolderIcon />
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={ proj.name } secondary={ proj.updated } />
+        <ListItemSecondaryAction>
+          <IconButton edge="end" aria-label="delete" onClick={ () => ( onDelete(proj._id) ) }>
+            <DeleteIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    )
+  })
+}
+
+const ProjectList = (props) => {
     const { 
       isLoading,
       profile,
       showProjectList,
       openProject,
       deleteProject
-    } = this.props
-    return (
-      <>
-        <Slide in={ showProjectList } direction='right' mountOnEnter unmountOnExit>
-          <List style={{ display: showProjectList ? 'initial':'none' }}>
-          <CircularProgress style={ {display: this.props.isLoading ? 'initial':'none'} } size={ 1 } />
-            {
-              this.generateProjectListItems(
-                profile.projects, 
-                openProject, 
-                deleteProject
-              )
-            }
-          </List>
-        </Slide>
-      </>
+    } = props
+    return(
+      <Slide in={ showProjectList } direction='right' mountOnEnter unmountOnExit>
+        <List style={{ display: showProjectList ? 'initial':'none' }}>
+          <CircularProgress style={ {display: isLoading ? 'initial':'none'} } size={ 1 } />
+          <ProjectListItems projects = { profile.projects } onOpen={ openProject } onDelete={ deleteProject } />
+        </List>
+      </Slide>
     )
-  }
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -80,7 +74,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     openProject: (id) => {
       dispatch(userActionCreator.openProject(id))
     },
-    deletProject: (id) => {
+    deleteProject: (id) => {
       dispatch(userActionCreator.deleteProject(id))
     }
   }

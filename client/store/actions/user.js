@@ -2,6 +2,7 @@ const config = require('../../../config/config.js')
 
 const ON_CHANGE = 'ON_CHANGE'
 const GET_PROFILE = 'GET_PROFILE'
+const SET_CURRENTPROJECTTAB = 'SET_CURRENTPROJECTTAB'
 const TOGGLE_PROJECTLIST = 'TOGGLE_PROJECTLIST'
 const SHOW_PROJECTLIST = 'SHOW_PROJECTLIST'
 const HIDE_PROJECTLIST = 'HIDE_PROJECTLIST'
@@ -38,6 +39,12 @@ const userActionCreator = {
       }else{
         // dispatch({ type: API_ERROR, message: 'Authentication not provided.'})
       }
+    }
+  },
+  setCurrentProjectTab: (index) => {
+    return (dispatch, getState) => {
+      const prevIdx  = getState().user.currentProjectTab
+      dispatch({ type: SET_CURRENTPROJECTTAB, currentIndex: index, previousIndex: prevIdx })
     }
   },
   toggleProjectList: () => {

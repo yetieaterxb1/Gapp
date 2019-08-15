@@ -2,6 +2,7 @@ const INIT_STATE = {
   profile: {
     projects: []
   },
+  currentProjectTab: 0,
   currentProject: false,
   showProjectList: false,
   showNewProjectModal: false,
@@ -22,8 +23,13 @@ const userReducer = (state=INIT_STATE, action) => {
       const { profile } = action
       return Object.assign({}, state, { profile: profile })
     }
+    case 'SET_CURRENTPROJECTTAB':{
+      const { currentIndex, previousIndex } = action
+      return Object.assign({}, state, { currentProjectTab: currentIndex, previousProjectTab: previousIndex })
+    }
     case 'TOGGLE_PROJECTLIST':{
       const { showProjectList } = state
+      console.log('TOGGLE_PROJECTLIST', showProjectList)
       return Object.assign({}, state, { showProjectList: !showProjectList })
     }
     case 'SHOW_PROJECTLIST':{

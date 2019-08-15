@@ -56,7 +56,6 @@ function ButtonAppBar(props) {
             <AddIcon />
           </Fab>
           <Typography variant="h6" color="inherit" className={ classes.grow }> { username } </Typography>
-          <Button color='inherit' onClick={ submitProject }> Submit </Button>
           <Button color='inherit' onClick={ submitLogout }> Logout </Button>
         </Toolbar>
       </AppBar>
