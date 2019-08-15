@@ -20,45 +20,63 @@ async function clearCollection(Model, clear=true){
   return(result)
 }
 
+function makeRandomString(minLen, maxLen){
+  const alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+  const iter = Math.ceil(Math.random() * maxLen)
+  let randomString = ''
+  for(let i = minLen; i<=maxLen; i++){
+    randomString = randomString + alpha[Math.floor(Math.random() * alpha.length)]
+  }
+  return randomString
+}
+
+function makeRandomUsers(nUsers){
+  const arroba = ['@gmail.com','@hotmail.com', '@yahoo.com', '@ru.com']
+  const randomUsers = Array.from({length: nUsers}).map(function(x){
+    return {
+      username: makeRandomString(3, 20),
+      email: makeRandomString(3, 20) + arroba[1],/*arroba[ Math.floor(Math.random() * arroba.length) ],*/
+      password: 'password'
+    }
+  })
+  return randomUsers
+}
 
 exports.User = function(clear, callback){
-  const seeds = [
-    {
+  const admin = [{
       username: 'admin',
       email: 'admin@gmail.com',
       password: 'password'
-    },
-    {
-      username: 'fake',
-      email: 'fake@gmail.com',
-      password: 'fake'
-    },
-    {
-      username: 'fake1',
-      email: 'fake1@gmail.com',
-      password: 'fake1'
-    },
-    {
-      username: 'fake2',
-      email: 'fake2@gmail.com',
-      password: 'fake2'
-    }
-  ]
+    }]
+  const seeds = makeRandomUsers(100).concat(admin)
   clearCollection(User, clear).then(function(){
     User.create(seeds, callback)
   })
 }
-
 
 async function getUserIDs(model, nUserIDs, idField='_id'){
   const uids = await model.find({}, idField, { limit: nUserIDs })
   return(uids)
 }
 
-async function updateUserIDs(userIDs, csvPath, parserParams, idCol = 'User'){
+async function updateUserIDs(userIDs, csvPath, parserParams, idCol='User'){
   const asArray = await csvtojson(parserParams).fromFile(csvPath)
   const updatedArray = asArray.map(function(obj){
     obj[idCol] = userIDs[ parseInt(obj[idCol]) ]
+    return(obj)
+  })
+  return(updatedArray)
+}
+
+async function getStrainIDs(model, nStrainIDs, idField='_id'){
+  const sids = await model.find({}, idField, { limit: nStrainIDs })
+  return(sids)
+}
+
+async function updateStrainIDs(strainIds, csvPath, parserParams, idCol='Strain'){
+  const asArray = await csvtojson(parserParams).fromFile(csvPath)
+  const updatedArray = asArray.map(function(obj){
+    obj[idCol] = strainIds[ parseInt(obj[idCol]) ]
     return(obj)
   })
   return(updatedArray)
@@ -69,8 +87,22 @@ exports.Rating = function(clear, callback){
     getUserIDs(User, 100)
     .then(function(userIDs){
       updateUserIDs(userIDs, RATINGS_CSV_PATH, PARSER_PARAMS)
-        .then(function(jsonSeed){
-          Rating.create(jsonSeed, callback)       
+        .then(function(/*jsonSeed*/ userUpdate){
+          getStrainIDs(Strain, 100).then(function(strainIDs){
+            updateStrainIDs(strainIDs, RATINGS_CSV_PATH, PARSER_PARAMS)
+              .then(function(/*jsonSeed*/ strainUpdate){
+                const seed = strainUpdate
+                for(i in seed){
+                  const user = userUpdate[i].User
+                  const strain = strainUpdate[i].Strain
+                  if(user && strain){
+                    seed[i].User = user._id
+                    seed[i].Strain = strain._id
+                  }
+                }
+                Rating.create(seed, callback) 
+              })  
+          })
         })
     })
   })

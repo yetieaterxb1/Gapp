@@ -191,12 +191,32 @@ const userActionCreator = {
       const currentIdx = projects.map((item) => {
         return item._id === currentProject
       }).findIndex(function(check){ return !!check })
+
+      // DIST
+      // fetch(config.api.path.root + '/api/predict', {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     jwt: jwt,
+      //     model: 'dist',
+      //     project: projects[currentIdx]
+      //   }),
+      //   headers: {
+      //     'authorization': jwt,
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json'
+      //   }
+      // }).then(res => res.json())
+      //   .then(function(data){
+      //     const message = data.message
+      //     dispatch({ type: 'SUBMIT_PROJECT', message: message, data: data.data })
+      //   })
+
+      // KMR
       fetch(config.api.path.root + '/api/predict', {
         method: 'POST',
         body: JSON.stringify({
           jwt: jwt,
-          model: 'dist',
-          project: projects[currentIdx]
+          model: 'kmr'
         }),
         headers: {
           'authorization': jwt,

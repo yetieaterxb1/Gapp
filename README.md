@@ -74,5 +74,39 @@ POST <br>
 &emsp;&emsp; username=[String] <br>
 &emsp;&emsp; password=[String] <br>
 &emsp; <strong> Optional: </strong> <br>
-&emsp;&emsp;
+&emsp; <strong> Example: </strong> <br>
+ <code>
+    fetch(config.api.path.root + '/login', {
+        method: 'POST',
+        body: JSON.stringify({
+            username: 'admin',
+            password: 'password'
+        }),
+        headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+</code>
+</details>
+<details closed>
+<summary>
+    <span style='font-size:1.6em'>/api/predict</span>
+</summary>
+POST <br>
+&emsp; <strong> Required: </strong> <br>
+&emsp;&emsp; jwt=String <br>
+&emsp;&emsp; method=String <br>
+&emsp;&emsp; strainIds=[String] <br>
+&emsp; <strong> Optional: </strong> <br>
+&emsp; <strong> Example: </strong> <br>
+ <code>
+    fetch(config.api.path.root + '/api/predict', {
+        method: 'POST',
+        body: JSON.stringify({
+          jwt: jwt,
+          model: 'dist',
+          strainIds: [ '5d54680e7dae405b65b8a361', '5d54680e7dae405b65b8a360', '5d54680e7dae405b65b8a35e']
+        })
+    })
+</code>
 </details>

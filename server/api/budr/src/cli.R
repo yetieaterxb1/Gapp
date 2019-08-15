@@ -1,4 +1,4 @@
-needs(jsonlite)
+# needs(jsonlite)
 needs(mongolite)
 source('/Users/sethmartinez/Desktop/PRJ/WWW/Gapp/server/api/budr/src/util/format.R')
 source('/Users/sethmartinez/Desktop/PRJ/WWW/Gapp/server/api/budr/src/util/aggregate.R')
@@ -21,27 +21,37 @@ Rating = mongo(collection='ratings', url = DB_URL)
 predictions <- list()
 result <- NULL
 
-if(exists('dist')){
-  predictions$dist <- getNearestStrains(dfc, userStrains)
+# if(exists('dist')){
+#   predictions$dist <- getNearestStrains(dfc, userStrains)
+# }
+
+# # if(args$knn){
+# #   predictions$knn <- NULL
+# # }
+
+# if(exists('kmr')){
+  if(T){
+  dfc.rnames <- as.data.frame(dfc)[,1]
+  dfc <- dfc[,-1]
+  rownames(dfc) <- dfc.rnames
+
+  dfr.rnames <- as.data.frame(dfr)[,1]
+  dfr <- dfr[,-1]
+  rownames(dfr) <- dfr.rnames
+  
+  predictions$kmr <- getRecommendedStrains(dfc, dfr, userId, selectNew)
 }
 
-# if(args$knn){
-#   predictions$knn <- NULL
-# }
-
-# if(args$kmr){
-#   predictions$kmr <- getRecommendedStrains(Strain$find(), Rating$find(), userId, selectNew)
-# }
-
-# if(args$vae){
-#   predictions$vae <- NULL
-# }
+# # if(args$vae){
+# #   predictions$vae <- NULL
+# # }
 
 
-if(!exists('N')) N <- 5
-if(!exists('aggMethod')) aggMethod <- 'top'
+# if(!exists('N')) N <- 5
+# if(!exists('aggMethod')) aggMethod <- 'top'
 
-# aggregatePredictions(predictions, N, aggMethod)
+# # aggregatePredictions(predictions, N, aggMethod)
 
-predictions$dist
+# # predictions$dist
 
+# # clusterStrains(dfc)

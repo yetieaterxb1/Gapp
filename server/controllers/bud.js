@@ -1,5 +1,6 @@
 const Budr = require('../api/budr')
 const Strain = require('../models/Strain')
+const Rating = require('../models/Rating')
 
 const budr = new Budr()
 
@@ -33,10 +34,10 @@ const strainController = function(req, res, next){
 }
 
 const predictController = function(req, res, next){
-  const body = req.body
   const model = req.body.model
   const project = req.body.project
-  const rData =  {}
+  const strainIds = req.body.strainIds
+  const userId = req.user._id
   const predictCallback = function(err, out){
     console.log('R STDERR:: ', err)
     console.log('R STDOUT:: ', out)
@@ -48,12 +49,13 @@ const predictController = function(req, res, next){
   }
   switch(model){
     case 'dist': {
-      rData.projectIds = project.likedIds
-      Strain.find({_id: { $in: project.likedIds }}, function(err, strains){
+      const likedIds = project.likedIds || strainIds
+      Strain.find({_id: { $in: likedIds }}, function(err, userStrains){
         Strain.find({}, function(err, dfc){
           budr.predict({
-            dfc: dfc,
-            userStrains: strains
+            model,
+            dfc,
+            userStrains
           }).call(predictCallback)
         })
       })
@@ -61,7 +63,16 @@ const predictController = function(req, res, next){
     case 'knn':
       null
     case 'kmr':
-      null
+      Strain.find({}, function(err, dfc){
+        Rating.find({}, function(err, dfr){
+          budr.predict({
+            model,
+            dfc,
+            dfr,
+            userId
+          }).call(predictCallback)
+        })
+      })
     case 'vae':
       null
   }

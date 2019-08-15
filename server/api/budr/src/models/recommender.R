@@ -6,13 +6,10 @@ clusterStrains <-function(dfc){
   i<-1
   repeat {
     set.seed(123)
-    #build two kmeans models starting with 2 and 3 clusters and repeat until dss<0.2
     i <- i + 1
     cluster1<-kmeans(dfc, i)
     cluster2<-kmeans(dfc, i+1)
-    #decision criterion
     dsc<-((cluster1$tot.withinss-cluster2$tot.withinss)/cluster1$tot.withinss)
-    #exit if dss < 0.2
     if (dsc < 0.1) break
   }
   return(cluster1)
@@ -26,7 +23,7 @@ getUserStrains <- function(dfr, user){
 }
 
 setUserStrainCluster<-function(dfc, strainCluster, userRatings){
-  df1 <- data.frame(cbind(dfc$id, clusterNum = strainCluster$cluster))
+  df1 <- data.frame(cbind(rownames(dfc), clusterNum = strainCluster$cluster))
   names(df1)<-c("id","cluster")
   userRatings$cluster <- df1[match(userRatings$Strain, df1$id), 2]
   return(userRatings)
@@ -37,16 +34,16 @@ getMeanClusterRating<-function(strainCluster, userRatings){
   if(max(like$x)<3){
     like<-as.vector(0)
   } else{
-    like<-as.vector(t(max(subset(like, x>=3, select=cluster))))
+    like <- like$cluster[which(like$x == max(like$x))]
   }
   return(like)
 }
 
-getGoodFilms<-function(like, strainCluster, dfc, max=100){
-  df1<- data.frame(cbind(dfc$id, clusterNum = strainCluster$cluster))
+getGoodStrains<-function(like, strainCluster, dfc, max=100){
+  df1 <- data.frame(cbind(rownames(dfc), clusterNum = strainCluster$cluster))
   names(df1)<-c("id", "cluster")
   if(like==0){
-    recommend<-df[sample.int(n = dim(titleFilmDF)[1], size = max), 1]
+    recommend<-df[sample.int(n = dim(dfc)[1], size = max), 1]
   }else{
     recommend<-as.vector(t(subset(df1, cluster==like, select=id)))
   }
@@ -57,16 +54,14 @@ getGoodFilms<-function(like, strainCluster, dfc, max=100){
 # Main #
 ########
 getRecommendedStrains<-function(dfc, dfr, userId, select.new=T){
-  # Main
   strainCluster<-clusterStrains(dfc)
   userRatings<-getUserStrains(dfr, userId)
   userRatings<-setUserStrainCluster(dfc, strainCluster, userRatings)
   like<-getMeanClusterRating(strainCluster, userRatings)
-  recommend<-getGoodFilms(like, strainCluster, dfc)
-  if(select.new){
-    # Only select not yet-rated strains
-    recommend <- recommend[!(recommend %in% userRatings$Strain)]
-  }
+  recommend<-getGoodStrains(like, strainCluster, dfc)
+  # if(select.new){
+  #   recommend <- recommend[!(recommend %in% userRatings$Strain)]
+  # }
   return(recommend)
 }
 # getRecommendedStrains(dataset.complete, dataset.ratings, 5)
