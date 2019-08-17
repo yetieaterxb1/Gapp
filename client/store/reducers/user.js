@@ -6,11 +6,7 @@ const INIT_STATE = {
   currentProject: false,
   showProjectList: false,
   showNewProjectModal: false,
-  strainData: {
-    raw: [],
-    colNames: [],
-    rows: []
-  }
+  strainData: false
 }
 
 const userReducer = (state=INIT_STATE, action) => {
@@ -29,7 +25,6 @@ const userReducer = (state=INIT_STATE, action) => {
     }
     case 'TOGGLE_PROJECTLIST':{
       const { showProjectList } = state
-      console.log('TOGGLE_PROJECTLIST', showProjectList)
       return Object.assign({}, state, { showProjectList: !showProjectList })
     }
     case 'SHOW_PROJECTLIST':{
@@ -50,23 +45,38 @@ const userReducer = (state=INIT_STATE, action) => {
       return Object.assign({}, state, { currentProject: projectId })
     }
     case 'CREATE_NEWPROJECT': {
+      console.log(state.profile.projects)
       return Object.assign({}, state, { projectListIsLoading: true })
     }
     case 'UPDATE_PROJECTLIST': {
-      const { projectList } = action
-      return Object.assign({}, state, { profile: { projects: projectList }, projectListIsLoading: false })
+      
+      console.log('UPDATE_PROJECTLIST: ', action.projectList)
+      return Object.assign({}, state, { profile: { projects: action.projectList }, projectListIsLoading: false })
     }
     case 'GET_ALLSTRAINS': {
       const { strainData } = action
       return Object.assign({}, state, { strainData })
     }
     case 'ADD_IDTOPROJECT': {
+      const { id } = action
       const { profile, currentProject } = state
       const currentIdx = profile.projects.map((item) => {
         return item._id === currentProject
       }).findIndex(check => !!check)
       const updatedProjects = profile.projects
-      updatedProjects[currentIdx].likedIds.push(action.id)
+      updatedProjects[currentIdx].likedIds.push(id)
+      return Object.assign({}, state, { profile: { projects: updatedProjects }})
+    }
+    case 'REMOVE_IDFROMPROJECT': {
+      const { id } = action
+      const { profile, currentProject } = state
+      const currentIdx = profile.projects.map((item) => {
+        return item._id === currentProject
+      }).findIndex(check => !!check)
+      const updatedProjects = profile.projects
+      updatedProjects[currentIdx].likedIds = updatedProjects[currentIdx].likedIds.filter((val)=>{
+        return val !== id
+      })
       return Object.assign({}, state, { profile: { projects: updatedProjects }})
     }
     case 'SUBMIT_PROJECT': {

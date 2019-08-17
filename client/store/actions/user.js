@@ -3,6 +3,7 @@ const config = require('../../../config/config.js')
 const ON_CHANGE = 'ON_CHANGE'
 const GET_PROFILE = 'GET_PROFILE'
 const SET_CURRENTPROJECTTAB = 'SET_CURRENTPROJECTTAB'
+const OPEN_PROJECT = 'OPEN_PROJECT'
 const TOGGLE_PROJECTLIST = 'TOGGLE_PROJECTLIST'
 const SHOW_PROJECTLIST = 'SHOW_PROJECTLIST'
 const HIDE_PROJECTLIST = 'HIDE_PROJECTLIST'
@@ -12,6 +13,7 @@ const CLOSE_NEWPROJECTMODAL = 'CLOSE_NEWPROJECTMODAL'
 const GET_ALLSTRAINS = 'GET_ALLSTRAINS'
 const GET_STRAINNAMEBYID = 'GET_STRAINNAMEBYID'
 const ADD_IDTOPROJECT = 'ADD_IDTOPROJECT'
+const REMOVE_IDFROMPROJECT = 'REMOVE_IDFROMPROJECT'
 const UPDATE_PROJECTLIST = 'UPDATE_PROJECTLIST'
 
 const userActionCreator = {
@@ -64,19 +66,19 @@ const userActionCreator = {
   },
   openProject: (id) => {
     return (dispatch, getState) => {
-      dispatch({ type:'OPEN_PROJECT', projectId: id })
+      dispatch({ type: OPEN_PROJECT, projectId: id })
     }
   },
-  createNewProject: (cookies) => {
+  createNewProject: (name, cookies) => {
     return (dispatch, getState) => {
+      name = !name ? projectname.value : name  
       const jwt = cookies ? cookies.get('jwt') : getState().login.jwt
       dispatch({ type: CREATE_NEWPROJECT })
       fetch(config.api.path.root + '/user/project', {
         method: 'POST',
         body: JSON.stringify({
-          jwt: jwt,
           method: 'create',
-          name: projectname.value
+          name: name
         }),
         headers: {
           'authorization': jwt,
@@ -93,7 +95,6 @@ const userActionCreator = {
   deleteProject: (id, cookies) => {
     return (dispatch, getState) => {
       const jwt = cookies ? cookies.get('jwt') : getState().login.jwt
-      dispatch({ type: CREATE_NEWPROJECT })
       fetch(config.api.path.root + '/user/project', {
         method: 'POST',
         body: JSON.stringify({
@@ -106,8 +107,10 @@ const userActionCreator = {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
-      }).then(data => data.json())
+      })
+        .then(res => res.json())
         .then((data) => {
+          console.log('RES data:', data.projectList)
           dispatch({ type: UPDATE_PROJECTLIST, projectList: data.data })
           dispatch({ type: CLOSE_NEWPROJECTMODAL })
         })
@@ -132,12 +135,14 @@ const userActionCreator = {
         headers: {
           'authorization': jwt
         }
-      }).then(res => res.json())
+      })
+        .then(res => res.json())
         .then(function(data){
           const message = data.message
           const raw = data.data
           const colNames = []
           const rows = []
+          
           raw.forEach((strain, idx) => {
             const row = []
             Object.keys(strain).forEach((key) => {
@@ -186,8 +191,12 @@ const userActionCreator = {
   // },
   addIdToProject: (id, cookies) => {
     return (dispatch, getState) => {
-      const projectId = id || getState().user.currentProject
-      dispatch({ type: 'ADD_IDTOPROJECT', id: projectId })
+      dispatch({ type: ADD_IDTOPROJECT, id })
+    }
+  },
+  removeIdFromProject: (id) => {
+    return (dispatch, getState) => {
+      dispatch({ type: REMOVE_IDFROMPROJECT, id })
     }
   },
   submitProject: (id, cookies) => {
@@ -227,8 +236,8 @@ const userActionCreator = {
         }),
         headers: {
           'authorization': jwt,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          // 'Accept': 'application/json',
+          // 'Content-Type': 'application/json'
         }
       }).then(res => res.json())
         .then(function(data){

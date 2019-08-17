@@ -13,6 +13,7 @@ function profileController(req, res, next){
 
 function projectController(req, res, next){
   const method = req.body.method
+  console.log(method)
   switch(method){
     case 'create': {
       const userId = req.user._id
@@ -27,30 +28,39 @@ function projectController(req, res, next){
       return User.findByIdAndUpdate(
         userId,
         { $push: {projects: project} },
-        { new: true },
+        { new: true, safe: true },
         function(err, user){
           if(err){
             res.status(500).json({ message: 'Internal Server error.' })
           }else if(user){
             res.status(302).json({ message: 'Success.', data: user.projects })
           }else{
-            res.status(203).json({ message: 'A project with name ' + name + ' already exists.' })
+            res.status(201).json({ message: 'A project with name ' + name + ' already exists.' })
           }
         }
       )
     }
     case 'delete': {
       const userId = req.user._id
-      const id = req.body.id
-      if(!id) return next()
-      return User.findByIdAndDelete( id, { new: true }, function(err, user){
-          if(err){
-            res.status(500).json({ message: 'Internal Server error.' })
-          }else if(user){
-            res.status(302).json({ message: 'Success.', data: user.projects })
-          }else{
-            res.status(203).json({ message: 'A project with name ' + name + ' already exists.' })
-          }
+      const projId = req.body.id
+      
+      if( !userId || !projId ) { return next() }
+      return User.findOne( 
+        { _id: userId  }, 
+        function(err, user, n){
+          if(err || !user) return res.status(500).json({ message: 'Internal Server error.' })
+          user.projects.id(projId).remove()
+          user.save(function(err, doc){
+            
+            if(!err){
+              const projects = doc.projects
+              console.log(projects)
+              res.status(200).send({ message: 'Success.', data: projects })
+              // res.status(302).json({ message: 'Success.' })
+            }else{
+              res.status(500).json({ message: 'Internal Server error.' })
+            }
+          })
         }
       )
     }

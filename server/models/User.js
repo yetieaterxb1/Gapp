@@ -12,7 +12,6 @@ const _projectSchema = new Schema({
   },
   likedIds: {
     type: Array,
-    default: []
   },
   created: {
     type: Date
@@ -52,8 +51,12 @@ const userSchema = new Schema({
     data: Buffer,
     contentType: String
   },
-  projects: [ _projectSchema ]
-})
+  projects: {
+    type: [ _projectSchema ],
+    default: undefined,
+    required: false
+  }
+}, { minimize: false })
 
 userSchema
   .virtual('password')

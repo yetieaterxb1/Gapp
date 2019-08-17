@@ -26,6 +26,17 @@ const styles = {
 class NewProjectModal extends Component {
   constructor(props) {
     super(props)
+    this.handleEnter = this.handleEnter.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+  }
+  handleEnter(e){
+    if (e.key === 'Enter') {
+      this.handleSubmit()
+    }
+  }
+  handleSubmit(){
+    this.props.createNewProject()
+    this.props.toggleNewProjectModal()
   }
   render() {
     const { 
@@ -42,7 +53,7 @@ class NewProjectModal extends Component {
             <TextField id='projectname' label='New Project Name' />
           </CardContent>
           <CardActions>
-            <Button onClick={ createNewProject } variant='contained' size="small"> Create </Button>
+            <Button onClick={ this.handleSubmit } variant='contained' size="small"> Create </Button>
           </CardActions>
         </Card>
       </Modal>
@@ -61,8 +72,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     toggleNewProjectModal: () => {
       dispatch(userActionCreator.toggleNewProjectModal())
     },
-    createNewProject: () => {
-      dispatch(userActionCreator.createNewProject())
+    createNewProject: (name) => {
+      dispatch(userActionCreator.createNewProject(name))
     }
   }
 }

@@ -12,28 +12,38 @@ import userActionCreator from '../../../../store/actions/user.js'
 class SmartTableRow extends Component {
   constructor(props){
     super(props)
-    this.isRowSelected = this.isRowSelected.bind(this)
+    this.handleRowClick = this.handleRowClick.bind(this)
   }
-  isRowSelected(row, profile, currentProject) {
-    const id = row._id
-    const currentIdx = profile.projects.map((project) => {
-      return project._id === currentProject
-    }).findIndex(item => !!item)
-    return !!profile.projects[currentIdx].likedIds.find( (item) => { return item === id } )
+
+  isRowSelected(rowId, profile, currentProject) {
+    let isSelected = false
+    if(rowId && profile && currentProject){
+      const currentIdx = profile.projects.map((project) => {
+        return project._id === currentProject
+      }).findIndex(item => !!item)
+      isSelected = !!profile.projects[currentIdx].likedIds.find( (item) => { return item === rowId } )
+    }else{
+      isSelected = false
+    }
+    return isSelected
   }
+
+  handleRowClick(){
+    const { rowId, profile, currentProject, addIdToProject, removeIdFromProject } = this.props
+    if(this.isRowSelected(rowId, profile, currentProject)){
+      removeIdFromProject(rowId)
+    }else{
+      addIdToProject(rowId)
+    }
+  }
+
   render(){
-    const { row, headers, currentProject, profile, addIdToProject } = this.props
+    const { row, rowId, headers, currentProject, profile, checkbox } = this.props
+    const highlightRow = this.isRowSelected(rowId, profile, currentProject) ? 'tomato':'transparent'
     return(
       <TableRow 
-        // style={ {backgroundColor: this.isRowSelected(row, profile, currentProject) ? 'green':'none'} }
-        onClick={ 
-          (e) => {
-            console.log('CurrentProject: ', currentProject)
-            console.log('CurrentRow: ', row._id)
-            console.log(this.isRowSelected(row, profile, currentProject))
-            addIdToProject(row._id)
-          } 
-        }
+        style={ {backgroundColor: highlightRow } }
+        onClick={ (e) => { this.handleRowClick(rowId) } }
       >
         { headers.map((header, propIndex) => (
           <TableCell key={ propIndex } >
@@ -52,14 +62,6 @@ SmartTableRow.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    // open: state.login.open,
-    // jwt: state.login.jwt,
-    // username: state.login.username,
-    // isAuthenticated: state.login.isAuthenticated,
-    // message: state.login.isAuthenticated,
-    // isLoading: state.login.isLoading,
-    // cookies: ownProps.cookies,
-    // showProjectList: state.user.showProjectList,
     profile: state.user.profile,
     currentProject: state.user.currentProject
   }

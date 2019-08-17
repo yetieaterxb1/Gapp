@@ -17,7 +17,7 @@ import { connect } from 'react-redux'
 import loginActionCreator from '../../store/actions/login.js'
 import userActionCreator from '../../store/actions/user.js'
 
-const styles = {
+const styles = theme => ({
   root: {
     flexGrow: 1,
   },
@@ -26,24 +26,25 @@ const styles = {
   },
   addFab: {
     position: 'absolute',
-    marginTop: '3.5%',
+    marginTop: '4.6vh',
     marginLeft: 50,
-
   },
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
   },
-}
+})
+
+
 
 function ButtonAppBar(props) {
   const { 
     classes,
     username,
-    submitProject, 
     submitLogout, 
     toggleNewProjectModal, 
-    toggleProjectList
+    toggleProjectList,
+    displayProjectList
   } = props
   return (
     <div className={ classes.root }>
@@ -52,10 +53,10 @@ function ButtonAppBar(props) {
           <IconButton className={ classes.menuButton } onClick={ toggleProjectList } color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
-          <Fab className={ classes.addFab } onClick={ toggleNewProjectModal } color="secondary" aria-label="Add">
+          <Fab className={ classes.addFab } onClick={ toggleNewProjectModal } style={{ display: displayProjectList ? 'none' : null }} color="secondary" aria-label="Add">
             <AddIcon />
           </Fab>
-          <Typography variant="h6" color="inherit" className={ classes.grow }> { username } </Typography>
+          <Typography variant='h6' color='inherit' className={ classes.grow }> { username } </Typography>
           <Button color='inherit' onClick={ submitLogout }> Logout </Button>
         </Toolbar>
       </AppBar>
@@ -65,8 +66,8 @@ function ButtonAppBar(props) {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    cookies: ownProps.cookies,
-    username: state.login.username
+    username: state.login.username,
+    displayProjectList: state.user.showProjectList
   }
 }
 
@@ -84,12 +85,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     },
     toggleProjectList: () => {
       dispatch(userActionCreator.toggleProjectList())
-    },
-    showProjectList: () => {     
-      dispatch(userActionCreator.showProjectList())
-    },
-    hideProjectList: () => {
-      dispatch(userAtionCreator.hideProjectList())
     }
   }
 }

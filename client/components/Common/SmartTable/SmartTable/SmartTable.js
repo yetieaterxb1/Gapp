@@ -86,7 +86,8 @@ class SmartTable extends Component {
     const {
       total,
       headers,
-      isLoading
+      isLoading,
+      rowIds
     } = this.props
 
     const {
@@ -129,6 +130,7 @@ class SmartTable extends Component {
                 key={ index }
                 row={ row }
                 headers={ headers }
+                rowId={ rowIds[index] }
               />
             ))
           }
@@ -162,14 +164,21 @@ class SmartTable extends Component {
 SmartTable.defaultProps = {
   limit: 40,
   data: [],
+  headers: [],
   isLoading: false
 }
 
 SmartTable.propTypes = {
-  headers: PropTypes.array.isRequired,
+  headers: PropTypes.oneOfType([
+    PropTypes.array.isRequired,
+    PropTypes.bool.isRequired
+  ]),
   data: PropTypes.array,
   offset: PropTypes.number, // current offset
-  total: PropTypes.number, // total number of rows
+  total: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.bool.isRequired
+  ]), // total number of rows
   limit: PropTypes.number, // num of rows in each page,
   isLoading: PropTypes.bool,
 }

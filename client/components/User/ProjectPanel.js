@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-
 import SwipeableViews from 'react-swipeable-views'
 
 import Grid from '@material-ui/core/Grid'
@@ -9,8 +8,10 @@ import Tab from '@material-ui/core/Tab'
 import Button from '@material-ui/core/Button'
 
 import SmartTable from '../Common/SmartTable'
+import StrainData from './StrainData'
 
 import userActionCreator from '../../store/actions/user.js'
+
 
 function a11yProps(index) {
   return {
@@ -39,7 +40,8 @@ class ProjectPanel extends Component {
   }
   render() {
     const { 
-      strainData,
+      // strainData,
+      data,
       submitProject,
       currentProject,
       currentProjectTab,
@@ -47,13 +49,7 @@ class ProjectPanel extends Component {
       setCurrentProjectTab
 
     } = this.props
-    const headers = strainData.colNames.map(function(cname){
-      return {
-        alias: cname,
-        sortable: true,
-        dataAlias: cname
-      }
-    })
+    const tableData = new StrainData(data)
     return(
       <>
         <Tabs
@@ -75,11 +71,12 @@ class ProjectPanel extends Component {
           <TabPanel index={ 0 } value={ currentProjectTab }>
             <Button color='inherit' style={{width: '100%'}} onClick={ () => { submitProject(currentProject)} }> Submit </Button>
             <SmartTable
-              isLoading={ false }
-              data={ strainData.raw }
-              headers={ headers }
-              limit={ 40 }
-              total={ strainData.raw.length }
+              isLoading={ tableData.isLoading }
+              data={ tableData.cleanData.raw }
+              headers={ tableData.smartTableHeaders }
+              rowIds={tableData.cleanData.rowIds}
+              limit={ 10 }
+              total={ tableData.nCleanRows }
             />
           </TabPanel>
           <TabPanel index={ 1 } value={ currentProjectTab }>
@@ -94,7 +91,8 @@ class ProjectPanel extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     cookies: ownProps.cookies,
-    strainData: state.user.strainData,
+    // strainData: state.user.strainData,
+    data: state.user.strainData,
     showProjectList: state.user.showProjectList,
     currentProject: state.user.currentProject,
     currentProjectTab: state.user.currentProjectTab,
