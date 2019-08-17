@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
 
+import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import Slide from '@material-ui/core/Slide'
 import { makeStyles } from '@material-ui/core/styles'
@@ -44,11 +45,9 @@ const widthQuery = (width, accept) => {
 class Home extends Component {
   constructor(props){
     super(props)
-  }
-  componentDidMount() {
-    this.props.closeNewProjectModal()
-    this.props.checkAuth()
-    this.props.getProfile()
+    const { cookies, setCookieProvider, checkAuth, getProfile } = props
+    setCookieProvider(cookies)
+    getProfile()
   }
   render() {
     const {
@@ -63,17 +62,17 @@ class Home extends Component {
       return <Redirect to='/login' />
     }
     return (
-      <>
+      <Box maxWidth='100vw'>
         <Loader display={ isLoading } />
         <NewProjectModal cookies={ cookies }/>
         <Appbar cookies={ cookies } />
-        <Grid container direction='row' alignItems='flex-start' spacing={ 3 } >
+        <Grid container direction='row' alignItems='flex-start' spacing={ 3 } size='small'>
           <Slide in={ showProjectList } direction='right' mountOnEnter unmountOnExit>
-              <Grid item xs={12} sm={ 12 } md={ 3 } lg={ 3 } style={{ height: widthQuery(this.props.width, ['xs']) ? '100vh' : '40vh' }} >
+              <Grid item xs={12} sm={ 12 } md={ 3 } lg={ 3 } style={{ height: widthQuery(this.props.width, ['sm']) ? '100vh' : '40vh', width:'100%' }} >
                 <ProjectList cookies={ cookies } />
               </Grid>
           </Slide>
-          <Grid item sm={ 12 } hidden={ !currentProject }> 
+          <Grid item xs={ 12 } hidden={ !currentProject }> 
             <ProjectPanel 
               cookies={ cookies }
               currentProject={ currentProject }
@@ -81,7 +80,7 @@ class Home extends Component {
             />
           </Grid>
         </Grid>
-      </>
+      </Box>
     )
   }
 }
@@ -94,7 +93,6 @@ const mapStateToProps = (state, ownProps) => {
     isAuthenticated: state.login.isAuthenticated,
     message: state.login.isAuthenticated,
     isLoading: state.login.isLoading,
-    cookies: ownProps.cookies,
     profile: state.user.profile,
     showProjectList: state.user.showProjectList,
     currentProject: state.user.currentProject,
@@ -105,6 +103,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
+    setCookieProvider: (provider) => {
+      dispatch(loginActionCreator.setCookieProvider(provider))
+    },
     getProfile: () => {
       dispatch(userActionCreator.getProfile(ownProps.cookies))
     },

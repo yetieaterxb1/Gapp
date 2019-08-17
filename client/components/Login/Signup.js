@@ -87,6 +87,7 @@ class Login extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    cookies: ownProps.cookies,
     open: state.login.open,
     isAuthenticated: state.login.isAuthenticated,
     cookies: ownProps.cookies,

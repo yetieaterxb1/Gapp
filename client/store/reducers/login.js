@@ -1,5 +1,5 @@
 const INIT_STATE = {
-  jwt: null,
+  cookies: false,
   isAuthenticated: false,
   message: false,
   isLoading: false
@@ -7,6 +7,13 @@ const INIT_STATE = {
 
 const loginReducer = (state=INIT_STATE, action) => {
   switch (action.type) {
+    case 'SET_COOKIEPROVIDER':{
+      const { provider, condition, force } = action
+      console.log('provider', provider)
+      const cookies = !!force ?  provider : ( !!condition && !state.cookies ? provider : state.cookies )
+      console.log('cookies', cookies)
+      return Object.assign({}, state, { cookies: provider })
+    }
     case 'ON_CHANGE':{
       const id = action.event.target.id
       const value = action.event.target.value
@@ -20,9 +27,9 @@ const loginReducer = (state=INIT_STATE, action) => {
       return Object.assign({}, state, { isLoading: true })
     }
     case 'LOGIN_SUCCESS':{
+      const { isAuthenticated, username, message } = action
       console.log('LOGIN_SUCCESS')
-      const { jwt, username, message } = action
-      return Object.assign({}, state, { jwt: jwt.token, username: username, isAuthenticated: jwt.success, isLoading: false, message: message })
+      return Object.assign({}, state, { username: username, isAuthenticated: isAuthenticated, isLoading: false, message: message })
     }
     case 'LOGIN_FAIL':{
       console.log('LOGIN_FAIL')
@@ -31,16 +38,19 @@ const loginReducer = (state=INIT_STATE, action) => {
     }
     case 'SUBMIT_LOGOUT':{
       console.log('SUBMIT_LOGOUT')
-      return Object.assign({}, state, { jwt: null, isAuthenticated: false, isLoading: true })
+      // const { removeCookie } = state.cookies
+      // removeCookie('jwt')
+      return Object.assign({}, state, { isAuthenticated: false, isLoading: true })
     }
     case 'LOGOUT_SUCCESS':{
       console.log('LOGOUT_SUCCESS')
       const { message } = action
-      return Object.assign({}, state, { jwt: null, isAuthenticated: false, isLoading: false, message: message })
+      return Object.assign({}, state, { isAuthenticated: false, isLoading: false, message: message })
     }
     case 'LOGOUT_FAIL':{
       console.log('LOGOUT_FAIL')
       const { message } = action
+      // state.cookies.removeCookie('jwt', { path: '/' })
       return Object.assign({}, state, { isAuthenticated: true, isLoading: false, message: message }) 
     }
     case 'IS_AUTHED':{

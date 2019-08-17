@@ -36,12 +36,16 @@ const styles = {
 class Login extends Component {
   constructor(props){
     super(props)
+    const { cookies, setCookieProvider } = props
+    setCookieProvider(cookies)
     this.handleEnter = this.handleEnter.bind(this)
   }
 
-  componentWillMount(){
-    this.props.checkAuth()
-    this.props.stopLoading()
+  componentWillMount(){ 
+    const { cookies, setCookieProvider, checkAuth, stopLoading } = this.props
+    setCookieProvider(cookies)   
+    checkAuth()
+    stopLoading()
   }
 
   handleEnter(e){
@@ -68,7 +72,6 @@ class Login extends Component {
           <span style={ {display: isLoading ? 'none' : 'initial'} } >
             <Card onKeyPress={ this.handleEnter } className={ classes.card } >
               <CardContent >
-                {/* <AccountBoxIcon style={ {float: 'right'} }/> */}
                 <AccountBoxIcon className={ classes.accountBoxIcon }/>
                 <TextField id='username' label='Username'  autoComplete='username' margin='normal' />
                 <TextField id='password' label='Password' type='password' autoComplete='current-password' margin='normal' />
@@ -97,9 +100,11 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
+    setCookieProvider: (provider) => {
+      dispatch(loginActionCreator.setCookieProvider(provider))
+    },
     submitLogin: () => {
-      const cookies = ownProps.cookies
-      dispatch(loginActionCreator.submitLogin(cookies))
+      dispatch(loginActionCreator.submitLogin())
     },
     stopLoading: () => {
       dispatch(loginActionCreator.stopLoading())

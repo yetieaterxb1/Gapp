@@ -17,6 +17,7 @@ function a11yProps(index) {
   return {
     id: `full-width-tab-${index}`,
     'aria-controls': `full-width-tabpanel-${index}`,
+    
   }
 }
 
@@ -27,7 +28,7 @@ function swipeDir(curIdx, preIdx){
 const TabPanel = (props) => {
   const { children, value, index, collapse } = props
   return (
-    <Grid item xs={ collapse ? 9:12 } hidden={value !== index} > {children} </Grid>
+    <Grid item xs={ collapse ? 9:12 }> {children} </Grid>
   )
 }
 
@@ -69,7 +70,7 @@ class ProjectPanel extends Component {
           onChangeIndex={ setCurrentProjectTab }
         >
           <TabPanel index={ 0 } value={ currentProjectTab }>
-            <Button color='inherit' style={{width: '100%'}} onClick={ () => { submitProject(currentProject)} }> Submit </Button>
+            <Button color='primary' variant="contained" style={{width: '100%'}} onClick={ () => { submitProject(currentProject)} }> Submit </Button>
             <SmartTable
               isLoading={ tableData.isLoading }
               data={ tableData.cleanData.raw }

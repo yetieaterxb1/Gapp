@@ -26,8 +26,8 @@ const styles = theme => ({
   },
   addFab: {
     position: 'absolute',
-    marginTop: '4.6vh',
-    marginLeft: 50,
+    marginTop: '4vh',
+    marginLeft: 60,
   },
   menuButton: {
     marginLeft: -12,
@@ -56,7 +56,7 @@ function ButtonAppBar(props) {
           <Fab className={ classes.addFab } onClick={ toggleNewProjectModal } style={{ display: displayProjectList ? 'none' : null }} color="secondary" aria-label="Add">
             <AddIcon />
           </Fab>
-          <Typography variant='h6' color='inherit' className={ classes.grow }> { username } </Typography>
+          <Typography variant='h6' color='inherit' className={ classes.grow }>  </Typography>
           <Button color='inherit' onClick={ submitLogout }> Logout </Button>
         </Toolbar>
       </AppBar>

@@ -22,25 +22,21 @@ const userActionCreator = {
       dispatch({ type: ON_CHANGE, event: e })
     }
   },
-  getProfile: (cookies) => {
+  getProfile: () => {
     return (dispatch, getState) => {
-      const jwt = cookies ? cookies.get('jwt') : getState().login.jwt
-      if(jwt){
-        fetch(config.api.path.root + '/user/profile', {
-          method: 'GET',
-          credentials: 'same-origin',
-          headers: {
-            'authorization': jwt,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        }).then(data => data.json())
-          .then((data) => {
-            dispatch({ type: GET_PROFILE, profile: data.data })
-          })
-      }else{
-        // dispatch({ type: API_ERROR, message: 'Authentication not provided.'})
-      }
+      const { cookies } = getState().login
+      const JWToken = cookies.get('jwt')
+      fetch(config.api.path.root + '/user/profile', {
+        method: 'GET',
+        headers: {
+          'authorization': JWToken,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }).then(res => res.json())
+        .then((data) => {
+          dispatch({ type: GET_PROFILE, profile: data.data })
+        })
     }
   },
   setCurrentProjectTab: (index) => {
@@ -69,10 +65,11 @@ const userActionCreator = {
       dispatch({ type: OPEN_PROJECT, projectId: id })
     }
   },
-  createNewProject: (name, cookies) => {
+  createNewProject: (name) => {
     return (dispatch, getState) => {
-      name = !name ? projectname.value : name  
-      const jwt = cookies ? cookies.get('jwt') : getState().login.jwt
+      const { cookies } = getState().login
+      const JWToken = cookies.get('jwt')
+      name = projectname.value || name
       dispatch({ type: CREATE_NEWPROJECT })
       fetch(config.api.path.root + '/user/project', {
         method: 'POST',
@@ -81,7 +78,7 @@ const userActionCreator = {
           name: name
         }),
         headers: {
-          'authorization': jwt,
+          'authorization': JWToken,
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
@@ -92,18 +89,19 @@ const userActionCreator = {
         })
     }
   },
-  deleteProject: (id, cookies) => {
+  deleteProject: (id) => {
     return (dispatch, getState) => {
-      const jwt = cookies ? cookies.get('jwt') : getState().login.jwt
+      const { cookies } = getState().login
+      const JWToken = cookies.get('jwt')
+      
       fetch(config.api.path.root + '/user/project', {
         method: 'POST',
         body: JSON.stringify({
-          jwt: jwt,
           method: 'delete',
           id: id
         }),
         headers: {
-          'authorization': jwt,
+          'authorization': JWToken,
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
@@ -126,14 +124,14 @@ const userActionCreator = {
       dispatch({ type: CLOSE_NEWPROJECTMODAL})
     }
   },
-  getAllStrains: (cookies) => {
+  getAllStrains: () => {
     return (dispatch, getState) => {
-      const jwt = cookies ? cookies.get('jwt') : getState().login.jwt
+      const { cookies } = getState().login
+      const JWToken = cookies.get('jwt')
       fetch(config.api.path.root + '/api/strains', {
         method: 'GET',
-        credentials: 'same-origin',
         headers: {
-          'authorization': jwt
+          'authorization': JWToken
         }
       })
         .then(res => res.json())
@@ -189,7 +187,7 @@ const userActionCreator = {
   //       })
   //   }
   // },
-  addIdToProject: (id, cookies) => {
+  addIdToProject: (id) => {
     return (dispatch, getState) => {
       dispatch({ type: ADD_IDTOPROJECT, id })
     }
@@ -199,45 +197,39 @@ const userActionCreator = {
       dispatch({ type: REMOVE_IDFROMPROJECT, id })
     }
   },
-  submitProject: (id, cookies) => {
+  submitProject: (id) => {
     return (dispatch, getState) => {
-      const jwt = cookies ? cookies.get('jwt') : getState().login.jwt
-      const currentProject = getState().user.currentProject
-      const projects = getState().user.profile.projects      
+      const { cookies } = getState().login
+      const { profile, currentProject } = getState().user
+      const projects = profile.projects  
+      const JWToken = cookies.get('jwt')
       const currentIdx = projects.map((item) => {
         return item._id === currentProject
       }).findIndex(function(check){ return !!check })
-
       // DIST
-      // fetch(config.api.path.root + '/api/predict', {
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     jwt: jwt,
-      //     model: 'dist',
-      //     project: projects[currentIdx]
-      //   }),
-      //   headers: {
-      //     'authorization': jwt,
-      //     'Accept': 'application/json',
-      //     'Content-Type': 'application/json'
-      //   }
-      // }).then(res => res.json())
-      //   .then(function(data){
-      //     const message = data.message
-      //     dispatch({ type: 'SUBMIT_PROJECT', message: message, data: data.data })
-      //   })
+      fetch(config.api.path.root + '/api/predict', {
+        method: 'POST',
+        body: JSON.stringify({
+          model: 'dist',
+          project: projects[currentIdx]
+        }),
+        headers: {
+          'authorization': JWToken
+        }
+      }).then(res => res.json())
+        .then(function(data){
+          const message = data.message
+          dispatch({ type: 'SUBMIT_PROJECT', message: message, data: data.data })
+        })
 
       // KMR
       fetch(config.api.path.root + '/api/predict', {
         method: 'POST',
         body: JSON.stringify({
-          jwt: jwt,
           model: 'kmr'
         }),
         headers: {
-          'authorization': jwt,
-          // 'Accept': 'application/json',
-          // 'Content-Type': 'application/json'
+          'authorization': JWToken
         }
       }).then(res => res.json())
         .then(function(data){

@@ -9,7 +9,7 @@ const User = require('../models/User')
 const router = express.Router()
 
 router.route('/user')
-  .get(passport.authenticate('jwt', { session: false }), function(req,res,next) { res.redirect('/#/user') })
+  .get(passport.authenticate('jwt', { session: false }), function(req,res,next) { res.redirect('/#/user') }) // Might handle authorization/authentication requests here
   .post(passport.authenticate('jwt', { session: false }), function(req,res,next) { res.json({ message: 'NULL'}) }) // Might handle authorization/authentication requests here
 
 router.route('/user/profile')

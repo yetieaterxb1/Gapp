@@ -13,12 +13,11 @@ function profileController(req, res, next){
 
 function projectController(req, res, next){
   const method = req.body.method
-  console.log(method)
   switch(method){
     case 'create': {
       const userId = req.user._id
       const name = req.body.name
-      if(!name) return next() // TODO:: send error status instead
+      if(!name) return res.end() // TODO:: send error status instead
       const created = new Date(Date.now())
       const project = {
         name: name,
@@ -43,7 +42,6 @@ function projectController(req, res, next){
     case 'delete': {
       const userId = req.user._id
       const projId = req.body.id
-      
       if( !userId || !projId ) { return next() }
       return User.findOne( 
         { _id: userId  }, 
@@ -51,12 +49,9 @@ function projectController(req, res, next){
           if(err || !user) return res.status(500).json({ message: 'Internal Server error.' })
           user.projects.id(projId).remove()
           user.save(function(err, doc){
-            
             if(!err){
               const projects = doc.projects
-              console.log(projects)
               res.status(200).send({ message: 'Success.', data: projects })
-              // res.status(302).json({ message: 'Success.' })
             }else{
               res.status(500).json({ message: 'Internal Server error.' })
             }
