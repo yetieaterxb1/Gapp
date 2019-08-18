@@ -10,23 +10,38 @@ function genEnsembleArgs(req){
   return {
     dist: {
       doMap: function(parms, item, done){
-        // TODO::
+        const likedIds = req.body.project.likedIds
+        Strain.find({_id: { $in: likedIds }}, '-Name -__v', function(err, strains){
+          Strain.find({}, '-Name -__v', function(err, dfc){
+            budr.predict({
+              model: item,
+              dfc: dfc,
+              userStrains: strains
+            }).call(function(err, data){
+              console.log('R result: ' + item + ': ', data)
+              console.log('R error: ' + item + ': ', err)
+              return !!err ? done(err) : done(data)
+            })
+          })
+        })
       },
       parms: {
-        // TODO::
+
       }
     },
     kmr: {
       doMap: function(parms, item, done){
-        // TODO::
-        Strain.find({}, function(err, dfc){
-          Rating.find({}, function(err, dfr){
+        const id = req.user._id
+        Strain.find({}, '-Name -__v', function(err, dfc){
+          Rating.find({}, '-Name -__v', function(err, dfr){
             budr.predict({
-              'kmr',
-              dfc,
-              dfr,
-              req.user._id
+              model: item, 
+              dfc: dfc, 
+              dfr: dfr,
+              id: id
             }).call(function(err, data){
+              console.log('R result: ' + item + ': ', data)
+              console.log('R error: ' + item + ': ', err)
               return err ? done(err) : done(data)
             })
           })
@@ -40,47 +55,12 @@ function genEnsembleArgs(req){
 }
 
 function mapModels(models=['dist', 'kmr'], args){
-  const doMap = args[v].doMap
-  const parms = args[v].parms
-  const iter = function(item, done){ doMap(parms, item, done) }
-  return new Promise(function(r, j){
-    async.map(models, iter, function(err, data){
-      if(!!err) return j(data)
-      return r(err)
-    })
-  })
-}
-
-function oneModel(model){
-  switch(model){
-    case 'dist': {
-      const likedIds = project.likedIds || strainIds
-      Strain.find({_id: { $in: likedIds }}, function(err, userStrains){
-        Strain.find({}, function(err, dfc){
-          budr.predict({
-            model,
-            dfc,
-            userStrains
-          }).call(budrCallback)
-        })
-      })
-    }
-    case 'knn':
-      null
-    case 'kmr':
-      Strain.find({}, function(err, dfc){
-        Rating.find({}, function(err, dfr){
-          budr.predict({
-            model,
-            dfc,
-            dfr,
-            userId
-          }).call(budrCallback)
-        })
-      })
-    case 'vae':
-      null
+  const iter = function(item, done){ 
+    const doMap = args[item].doMap
+    const parms = args[item].parms
+    doMap(parms, item, done)
   }
+  return async.map(models, iter)
 }
 
 function genCallback(req, res, next, errStatus=204, errMessage='Server error.', okStatus=302, okMessage='Query successful.') {
@@ -93,23 +73,16 @@ function genCallback(req, res, next, errStatus=204, errMessage='Server error.', 
   }
 }
 
-function budrCallback(err, data){
-  console.log('R STDERR:: ', err)
-  console.log('R STDOUT:: ', data)
-  if(err){
-    genCallback(req,res,next)(err, null)
-  }else{
-    genCallback(req,res,next)(null, data)
-  }
-}
-
 const strainController = function(req, res, next){
-  let method = 'find', query = {}, project = {}, options = {}, callback = _genCallback(req, res, next) // If req.body.params == null --> run the query Strains.find({}) --> send resulting docs to client
   const params = req.body.params || {}
+  let method = 'find', 
+      query = {}, 
+      project = {}, 
+      options = {}, 
+      callback = genCallback(req, res, next)
   if(params.id){
     method = 'findById'
     query = params.id
-    callback = genCallback(req, res, next)
   } else if(params.name){
     method = 'find'
     query = { Name: params.name }
@@ -124,24 +97,22 @@ const strainController = function(req, res, next){
 
 const predictController = function(req, res, next){
   const model = req.body.model
-  const project = req.body.project
-  const strainIds = req.body.strainIds
-  const userId = req.user._id
-  
-  const ensemble = Array.isArray(model) || model.split(',')
-  
+  const ensemble = model ? model.split(',') || [model] : false
   if(ensemble){
-    // If model is a list of model types do...
-    mapModels(model, ENSEMBLE_MODEL_ARGS)
-    .then(function(data){
-      genCallback(req, res, next)(false, data)
-    })
-    .catch(function(err){
-      genCallback(req, res, next)(err, false)
-    })
+    const eargs = genEnsembleArgs(req)
+    mapModels(ensemble, eargs)
+      .then(function(){
+        // No error is thrown here.
+      })
+      .catch(function(thisIsActuallyData){
+        // The async.map call inside of mapModels throws an error even when async.map([1,2,3], (item, done)=>{ done(true) }).
+        // I think the async.map iterator must return a value rather than calling done(value), because I think done() is only used to pass errors.
+        // The problem is that the r-script .call() method does not return a value for async.map to poulate its results.
+        // The only solution I can think of is to use the r-script .callSync() method, which does return a value. I've not yet tested if this idea works.
+        genCallback(req, res, next)(false, thisIsActuallyData)
+      })
   }else{
-    // If model is a single string do...
-    oneModel(model)
+    genCallback(req,res,next)(true, null)
   }
 }
 

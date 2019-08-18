@@ -51,6 +51,7 @@ class ProjectPanel extends Component {
 
     } = this.props
     const tableData = new StrainData(data)
+    console.log('currentProject', currentProject)
     return(
       <>
         <Tabs

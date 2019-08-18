@@ -140,7 +140,6 @@ const userActionCreator = {
           const raw = data.data
           const colNames = []
           const rows = []
-          
           raw.forEach((strain, idx) => {
             const row = []
             Object.keys(strain).forEach((key) => {
@@ -159,34 +158,6 @@ const userActionCreator = {
         })
     }
   },
-  // getStrainNameById: (ids, cookie) => {
-  //   return (dispatch, getState) => {
-  //     const jwt = cookies.get('jwt')
-  //     fetch(config.api.path.root + '/api/strains', {
-  //       method: 'GET',
-  //       credentials: 'same-origin',
-  //       headers: {
-  //         'authorization': jwt
-  //       }
-  //     }).then(res => res.json())
-  //       .then(function(data){
-  //         const raw = data.strains
-  //         const colNames = []
-  //         const rows = []
-  //         raw.forEach((strain, idx) => {
-  //           const row = []
-  //           Object.keys(strain).forEach((key) => {
-  //             if(idx === 0){
-  //               colNames.push(key)
-  //             }
-  //             row.push(strain[key])
-  //           })
-  //           rows.push(row)
-  //         })
-  //         dispatch({ type: GET_ALLSTRAINS,  mesage: data.message, strainData: { raw:raw, colNames:colNames, rows:rows }})
-  //       })
-  //   }
-  // },
   addIdToProject: (id) => {
     return (dispatch, getState) => {
       dispatch({ type: ADD_IDTOPROJECT, id })
@@ -207,6 +178,7 @@ const userActionCreator = {
         return item._id === currentProject
       }).findIndex(function(check){ return !!check })
       // DIST
+      console.log('sent project', projects[currentIdx])
       fetch(config.api.path.root + '/api/predict', {
         method: 'POST',
         body: JSON.stringify({
@@ -214,28 +186,32 @@ const userActionCreator = {
           project: projects[currentIdx]
         }),
         headers: {
-          'authorization': JWToken
+          'authorization': JWToken,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         }
-      }).then(res => res.json())
+      })
+        .then(res => res.json())
         .then(function(data){
-          const message = data.message
-          dispatch({ type: 'SUBMIT_PROJECT', message: message, data: data.data })
+          dispatch({ type: 'SUBMIT_PROJECT', message: data.message, data: data.data })
         })
 
       // KMR
-      fetch(config.api.path.root + '/api/predict', {
-        method: 'POST',
-        body: JSON.stringify({
-          model: 'kmr'
-        }),
-        headers: {
-          'authorization': JWToken
-        }
-      }).then(res => res.json())
-        .then(function(data){
-          const message = data.message
-          dispatch({ type: 'SUBMIT_PROJECT', message: message, data: data.data })
-        })
+      // fetch(config.api.path.root + '/api/predict', {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     model: 'kmr'
+      //   }),
+      //   headers: {
+      //     'authorization': JWToken,
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json'
+      //   }
+      // }).then(res => res.json())
+      //   .then(function(data){
+      //     const message = data.message
+      //     dispatch({ type: 'SUBMIT_PROJECT', message: message, data: data.data })
+      //   })
     }
   }
 }
