@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 
 import { withStyles } from '@material-ui/core/styles'
@@ -25,46 +25,42 @@ const styles = {
   }
 }
 
-class NewProjectModal extends Component {
-  constructor(props) {
-    super(props)
-    this.handleEnter = this.handleEnter.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+const NewProjectModal = props => {
+  const { 
+    classes,
+    showNewProjectModal,
+    toggleNewProjectModal,
+    createNewProject
+  } = props
+
+  const handleSubmit = e => {
+    createNewProject()
+    toggleNewProjectModal()
   }
-  handleEnter(e){
+
+  const handleEnter = e => {
     if (e.key === 'Enter') {
-      this.handleSubmit()
+      handleSubmit()
     }
   }
-  handleSubmit(){
-    this.props.createNewProject()
-    this.props.toggleNewProjectModal()
-  }
-  render() {
-    const { 
-      classes,
-      showNewProjectModal,
-      toggleNewProjectModal,
-      createNewProject
-    } = this.props
-    return (
-      <Slide in={showNewProjectModal} direction={ 'down' } mountOnEnter unmountOnExit>
-        <Box>
-        <Modal open={ true } onClose={ toggleNewProjectModal } aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" >
-          <Card onKeyPress={ this.handleEnter } className={ classes.modal } >
-            <CardContent >
-              <InputIcon className={ classes.icon }/>
-              <TextField id='projectname' label='New Project Name' />
-            </CardContent>
-            <CardActions>
-              <Button onClick={ this.handleSubmit } variant='contained' size="small"> Create </Button>
-            </CardActions>
-          </Card>
-        </Modal>
-        </Box>
-      </Slide>
-    )
-  }
+  
+  return (
+    <Slide in={ showNewProjectModal } direction={ 'down' } mountOnEnter unmountOnExit>
+      <Box>
+      <Modal open={ true } onClose={ toggleNewProjectModal } >
+        <Card onKeyPress={ handleEnter } className={ classes.modal } >
+          <CardContent >
+            <InputIcon className={ classes.icon }/>
+            <TextField id='projectname' label='New Project Name' />
+          </CardContent>
+          <CardActions>
+            <Button onClick={ handleSubmit } variant='contained' size='small'> Create </Button>
+          </CardActions>
+        </Card>
+      </Modal>
+      </Box>
+    </Slide>
+  )
 }
 
 const mapStateToProps = (state, ownProps) => {

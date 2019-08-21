@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
 
@@ -9,7 +9,6 @@ import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 
 import Loader from '../Common/Loader'
@@ -29,45 +28,41 @@ const styles = {
   },
   accountBoxIcon: {
     float: 'right'
+  },
+  message: {
+    color: 'tomato'
   }
 }
 
-class Login extends Component {
-  constructor(props){
-    super(props)
-    this.handleEnter = this.handleEnter.bind(this)
-  }
+const Signup = props => {
 
-  componentWillMount(){
-    this.props.checkAuth()
-    this.props.stopLoading()
-  }
+  const { 
+    classes,
+    message,
+    isAuthenticated,
+    isLoading,
+    submitSignup
+  } = props
 
-  handleEnter(e){
-    if (e.key === 'Enter') {
-      this.props.submitSignup()
+  const handleKeyPress = e => {
+    if(e.key === 'Enter') {
+      submitSignup()
     }
   }
 
-  render() {
-    const { 
-      classes,
-      message,
-      isAuthenticated,
-      isLoading,
-      submitSignup
-    } = this.props
-    if( isAuthenticated ){
-      return <Redirect to='/user' />
-    }
-    return (
+  useEffect(()=>{
+    checkAuth()
+  })
+
+  return (
+    isAuthenticated ?
+      <Redirect to='/user' /> :
       <>
         <Loader display={ isLoading } />
         <Grid container className={ classes.grid } justify='center' >
           <span style={ {display: isLoading ? 'none' : 'initial'} } >
-            <Card onKeyPress={ this.handleEnter } className={ classes.card } >
+            <Card onKeyPress={ handleKeyPress } className={ classes.card } >
               <CardContent >
-                {/* <AccountBoxIcon style={{float: 'right'}}/> */}
                 <AccountBoxIcon className={ classes.accountBoxIcon } />
                 <TextField id='email' label='Email' autoComplete='email' margin='normal' />
                 <TextField id='username' label='Username' autoComplete='username' margin='normal' />
@@ -77,38 +72,28 @@ class Login extends Component {
                 <Button className={ classes.button } onClick={ submitSignup } variant='contained' size="small" > Submit </Button>
               </CardActions>
             </Card>
-            <p style={ {color: 'tomato'} }>{ message }</p>
+            <p className={ classes.message }>{ message }</p>
           </span>
         </Grid>
       </>
-    )
-  }
+  )
 }
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    cookies: ownProps.cookies,
-    open: state.login.open,
     isAuthenticated: state.login.isAuthenticated,
-    cookies: ownProps.cookies,
     message: state.login.message,
-    isLoading: state.login.isLoading,
-    cookies: ownProps.cookies
+    isLoading: state.login.isLoading
   }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     submitSignup: () => {
-      const cookies = ownProps.cookies
-      dispatch(loginActionCreator.submitSignup(cookies))
-    },
-    stopLoading: () => {
-      dispatch(loginActionCreator.stopLoading())
+      dispatch(loginActionCreator.submitSignup())
     },
     checkAuth: () => {
-      const cookies = ownProps.cookies
-      dispatch(loginActionCreator.checkAuth(cookies))
+      dispatch(loginActionCreator.checkAuth())
     }
   }
 }
@@ -116,4 +101,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Login))
+)(withStyles(styles)(Signup))

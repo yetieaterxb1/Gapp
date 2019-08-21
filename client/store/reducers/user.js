@@ -74,47 +74,43 @@ const userReducer = (state=INIT_STATE, action) => {
     }
     case 'ADD_IDTOPROJECT': {
       const { profile, id } = action
-      const currentIdx = profile.projects.map((item) => {
-        return item._id === currentProject
-      }).findIndex(check => !!check)
-      const updatedProjects = profile.projects
-      updatedProjects[currentIdx].likedIds.push(id)
+      const { projects } = profile
+      const pidx = projects.findIndex(item => item._id === id)
+      projects[pidx].likedIds.push(id)
       return Object.assign({}, state, { profile: { projects: updatedProjects }, ...state })
     }
     case 'SET_RATING': {
-      const { profile, proj, id, val } = action
-      const updatedProjects = profile.projects
-      const currentIdx = updatedProjects.findIndex(item => item._id === proj)
+      const { profile, id, val } = action
+      const { projects } = profile
+      const pidx = projects.filter(item => item._id === id)
 
-      const ratings = updatedProjects[currentIdx].ratings
-      const ratingIdx = ratings.findIndex(rating => rating._id === id)
-      updatedProjects[currentIdx].ratings[ratingIdx].Rating = val
+      const ratings = projects[pidx].ratings
+      const ridx = ratings.findIndex(rating => rating._id === id)
+      projects[pidx].ratings[ridx].Rating = val
 
-      const likedIds = updatedProjects[currentIdx].likedIds
-      updatedProjects[currentIdx].likedIds = val>3 ? likedIds.concat(id) : likedIds.filter(bi => id === bi)
+      const likedIds = projects[pidx].likedIds
+      projects[pidx].likedIds = val>3 ? likedIds.concat(id) : likedIds.filter(bi => id === bi)
       
-      return Object.assign({}, { profile: { projects: updatedProjects }, ...state})
+      return Object.assign({}, { profile: { projects: projects }})
     }
     case 'REMOVE_IDFROMPROJECT': {
       const { id } = action
-      const { profile, currentProject } = state
-      const currentIdx = profile.projects.findIndex(item =>  item._id === currentProject)
-      const updatedProjects = profile.projects
-      updatedProjects[currentIdx].likedIds = updatedProjects[currentIdx].likedIds.filter((val)=>{
-        return val !== id
-      })
-      return Object.assign({}, state, { profile: { projects: updatedProjects }})
+      const { profile, pid } = state
+      const pidx = profile.projects.findIndex(item => item._id === pid)
+      const projects = profile.projects
+      projects[pidx].likedIds = projects[pidx].likedIds.filter(val => val !== id)
+      return Object.assign({}, state, { profile: { projects }})
     }
     case 'SUBMIT_PROJECT': {
-      return Object.assign({}, state, { currentProjectTab: 1})
+      return Object.assign({}, state, { currentProjectTab: 1 })
     }
     case 'RECEIVE_PROJECTRESULTS': {
       const { data } = action
       const { profile, currentProject } = state
-      const currentIdx = profile.projects.findIndex(item =>  item._id === currentProject)
-      const updatedProjects = profile.projects
-      updatedProjects[currentIdx].results = data
-      return Object.assign({}, state, { profile: { projects: updatedProjects }})
+      const pidx = profile.projects.findIndex(item => item._id === currentProject)
+      const projects = profile.projects
+      projects[pidx].results = data
+      return Object.assign({}, state, { profile: { projects }})
     }
     default:
       return state

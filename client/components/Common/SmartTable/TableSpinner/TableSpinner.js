@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 const TableSpinner = () => (
@@ -9,5 +9,5 @@ const TableSpinner = () => (
   </tr>
 );
 
-export default TableSpinner;
+export default TableSpinner
 

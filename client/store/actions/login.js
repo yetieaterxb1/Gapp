@@ -1,4 +1,4 @@
-const config = require('../../../config/config.js')
+import config from '../../../config/config.js'
 
 const SET_COOKIEPROVIDER = 'SET_COOKIEPROVIDER'
 const SUBMIT_LOGIN = 'SUBMIT_LOGIN'
@@ -13,9 +13,11 @@ const IS_AUTHED = 'IS_AUTHED'
 const STOP_LOADING = 'STOP_LOADING'
 
 const loginActionCreator = {
-  setCookieProvider: (provider) => {
+  setCookieProvider: (provider, force) => {
     return (dispatch, getState) => {
-      dispatch({ type:SET_COOKIEPROVIDER, provider: provider })
+      const { cookies } = getState().login
+      const replace = !!force ?  provider : cookies
+      dispatch({ type:SET_COOKIEPROVIDER, cookies: replace })
     }
   },
   onChange: (e) => {
@@ -30,7 +32,6 @@ const loginActionCreator = {
   },
   submitLogin : () => {
     return (dispatch, getState) => {
-      const { cookies } = getState().login
       if(username.value && password.value){
         dispatch({ type: SUBMIT_LOGIN })
         fetch(config.api.path.root + '/login', {
@@ -43,19 +44,18 @@ const loginActionCreator = {
             'Content-Type': 'application/json'
           }
         })
-        .then((res) => {
-          if (res.status === 401){
-            return { message: 'Invalid username / password.' }
-          }else{
-            return res.json()
-          }
+        .then(res => {
+          return res.status === 401 ?
+            { message: 'Invalid username / password.' } :
+            res.json()
         })
-        .then((data) => {
+        .then(data => {
+          const { cookies } = getState().login
           const { jwt, isAuthenticated, message } = data
           const isAuthed = isAuthenticated && jwt.success
           if(isAuthed){
             cookies.set('jwt', jwt.token, { path: '/' })
-            setTimeout(function(){
+            setTimeout(() => {
               dispatch({
                 type: LOGIN_SUCCESS,
                 isAuthenticated: isAuthed,
@@ -73,23 +73,20 @@ const loginActionCreator = {
       }        
     }
   },
-  submitLogout: function(){
+  submitLogout: () => {
     return function(dispatch, getState){
-      const { cookies } = getState().login
-      cookies.remove('jwt')
       dispatch({ type: SUBMIT_LOGOUT })
+      getState().login.cookies.remove('jwt')
       fetch(config.api.path.root + '/logout')
       .then((res) => {
-        if (res.status === 401){
-          return dispatch({type: LOGOUT_FAIL, message: 'Unable to logout'})
-        }else{
-          return dispatch({type: LOGOUT_SUCCESS, message: 'Logout successful.'}) 
-        }
+        res.status === 401 ?
+          dispatch({type: LOGOUT_FAIL, message: 'Unable to logout'}) :
+          dispatch({type: LOGOUT_SUCCESS, message: 'Logout successful.'}) 
       })
     }
   },
-  submitSignup: function(cookies){
-    return function(dispatch, getState){
+  submitSignup: () => {
+    return (dispatch, getState) => {
       if(username.value && password.value && email.value){
         dispatch({ type: SUBMIT_SIGNUP })
         fetch(config.api.path.root + '/signup', {
@@ -98,55 +95,47 @@ const loginActionCreator = {
             email: email.value,
             username: username.value,
             password: password.value
-          }),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(res => res.json())
-        .then((data) => {
-          const { jwt, isAuthenticated, message } = data
-          if(isAuthenticated){
-            cookies.set('jwt', jwt.token, { path: '/' }) 
-            setTimeout(function(){
+          })
+        }).then(res => res.json())
+          .then((data) => {
+            const { jwt, isAuthenticated, message } = data
+            if(isAuthenticated){
+              getState().login.cookies.set('jwt', jwt.token, { path: '/' }) 
+              setTimeout(() => {
+                dispatch({
+                  type: LOGIN_SUCCESS,
+                  jwt: jwt, 
+                  username: data.username,
+                  message: message
+                })
+              }, 1000)
+            }else{
               dispatch({
-                type: LOGIN_SUCCESS,
-                jwt: jwt, 
-                username: data.username,
+                type: LOGIN_FAIL,
                 message: message
               })
-            }, 1000)
-          }else{
-            dispatch({
-              type: LOGIN_FAIL,
-              message: message
-            })
-          }
-        })
+            }
+          })
       }
     }
   },
-  checkAuth: (cookies) => {
+  checkAuth: () => {
     return (dispatch, getState) => {
-      const JWToken = cookies.get('jwt', { path: '/' })
-      if(JWToken){
+      const JWToken = getState().login.cookies.get('jwt', { path: '/' })
+      !JWToken ?
+        dispatch({ type: IS_AUTHED, isAuthenticated: false }) :
         fetch(config.api.path.root + '/user', {
           method: 'GET',
           headers: {
             'authorization': JWToken,
           }
-        })
-        .then((res) => {
-          if(res.ok){
-            dispatch({ type: IS_AUTHED, isAuthenticated: true })
-          }else{
+        }).then(res => {
+          res.isAuthenticated ?
+            dispatch({ type: IS_AUTHED, isAuthenticated: true }) :
             dispatch({ type: IS_AUTHED, isAuthenticated: false })
-          }
         })
-      }else{
-        dispatch({ type: IS_AUTHED, isAuthenticated: false })
-      }
     }
   }
 }
+
 export default loginActionCreator

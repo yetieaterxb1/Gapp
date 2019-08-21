@@ -1,7 +1,6 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import { Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
-import { useCookies } from 'react-cookie'
 
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -10,7 +9,6 @@ import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 
 import Loader from '../Common/Loader'
@@ -30,72 +28,59 @@ const styles = {
   },
   accountBoxIcon: {
     float: 'right'
+  },
+  message: {
+    color: 'tomato'
   }
 }
 
-class Login extends Component {
-  constructor(props){
-    super(props)
-    const { cookies, setCookieProvider } = props
-    setCookieProvider(cookies)
-    this.handleEnter = this.handleEnter.bind(this)
-  }
+const Login = props => {
+  const { 
+    classes, cookies, isLoading, message, isAuthenticated, 
+    setCookieProvider, checkAuth, submitLogin  
+  } = props
 
-  componentWillMount(){ 
-    const { cookies, setCookieProvider, checkAuth, stopLoading } = this.props
-    setCookieProvider(cookies)   
+  useEffect(()=>{
     checkAuth()
-    stopLoading()
-  }
+    setCookieProvider(cookies, true)
+  })[cookies, isAuthenticated]
 
-  handleEnter(e){
+  const handleKeyPress = e => {
     if (e.key === 'Enter') {
       this.props.submitLogin()
     }
   }
 
-  render() {
-    const { 
-      classes,
-      message,
-      isAuthenticated,
-      isLoading,
-      submitLogin
-    } = this.props
-    if( isAuthenticated ){
-      return <Redirect to='/user'/>
-    }
-    return (
+  return(
+    isAuthenticated ?
+      <Redirect to='/user'/> :
       <>
         <Loader display={ isLoading }/>
         <Grid container className={ classes.grid } justify='center' >
           <span style={ {display: isLoading ? 'none' : 'initial'} } >
-            <Card onKeyPress={ this.handleEnter } className={ classes.card } >
+            <Card onKeyPress={ handleKeyPress } className={ classes.card } >
               <CardContent >
                 <AccountBoxIcon className={ classes.accountBoxIcon }/>
                 <TextField id='username' label='Username'  autoComplete='username' margin='normal' />
                 <TextField id='password' label='Password' type='password' autoComplete='current-password' margin='normal' />
               </CardContent>
               <CardActions>
-                <Button className={classes.button} onClick={ submitLogin } variant='contained' size="small"> Submit </Button>
+                <Button className={ classes.button } onClick={ submitLogin } variant='contained' size="small"> Submit </Button>
               </CardActions>
             </Card>
-            <p style={ {color: 'tomato'} }>{ message }</p>
+            <p className={ classes.message }>{ message }</p>
           </span>
         </Grid>
       </>
-    )
-  }
+  )
 }
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    open: state.login.open,
     isAuthenticated: state.login.isAuthenticated,
     message: state.login.message,
-    isLoading: state.login.isLoading,
-    cookies: ownProps.cookies
-  }
+    isLoading: state.login.isLoading
+  } 
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -106,12 +91,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     submitLogin: () => {
       dispatch(loginActionCreator.submitLogin())
     },
-    stopLoading: () => {
-      dispatch(loginActionCreator.stopLoading())
-    },
     checkAuth: () => {
-      const cookies = ownProps.cookies
-      dispatch(loginActionCreator.checkAuth(cookies))
+      dispatch(loginActionCreator.checkAuth())
     }
   }
 }

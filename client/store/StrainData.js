@@ -1,18 +1,20 @@
 const range = (min,max,inc) => Array.from({length:(max-min)/inc}, (v,i) => i+min+inc-1)
 const mean = (X) => X.reduce((acc,x) => acc + x) / X.length
 const stdev = (X,u) => Math.sqrt( X.reduce((acc,x) => acc + Math.pow(x-u,2)) / X.length )
-const t = (obj) => {
-  // TODO:: transpose an object preserving keys
+
+const norm = {
+  minmax: ({ x,min,max }) => (x - min) / (max - min),
+  mean: ({ x,mean,min,max }) => (x - mean) / (max - min),
+  zscore: ({ x,mean,stdev }) => (x - mean) / stdev
 }
+
 const transpose = (mat) => {
-  const usekeys = Array.isArray(mat)
-  if(usekeys) return transobj(mat)
   const t = []
   N = range(0,mat.length,1)
   ncol = mat.reduce((a,r) => acc = acc !== r.length ? r.length : acc)
-  mat.map((n) => {
-    const M = range(0,r.length,1)
-    M.forEach(m=>{
+  mat.map(n => {
+    const M = range(0, r.length, 1)
+    M.forEach(m => {
       t[m] = []
       t[m][n] = r[n][m]
     })
@@ -35,13 +37,14 @@ export default class StrainData{
     })
     return colNames
   }
+
   static makeCleanData(data, normalize='mean', rescale=true, columns=['_id', '__v']){
     const cleanData = {}
     cleanData.data = []
     cleanData.rows = []
     cleanData.rowIds = []
     data.colNames = StrainData.makeColNames(data)
-    cleanData.colNames = data.colNames.filter(function(item){ return !columns.includes(item) })
+    cleanData.colNames = data.colNames.filter(item => !columns.includes(item))
     data.forEach((row, idx) => {
       cleanData.rowIds.push(row._id)
       cleanData.data[idx] = {}
@@ -90,14 +93,13 @@ export default class StrainData{
   }
 
   static makeSmartTableNormalizedHeaders(data, opts={ sortable: true, type:'percent', exclude:['Name'] }){
-    return data.colNames.map(function(cname){
+    return data.colNames.map(cname => {
       return opts.exclude.includes(cname) ?
         {
           alias: cname,
           dataAlias: cname,
           sortable: opts.sortable
-        } :
-        {
+        } : {
           alias: cname,
           dataAlias: cname,
           format: {
@@ -109,9 +111,9 @@ export default class StrainData{
   }
 
   static makeSmartTableRatings(data, ratings, columns=['_id', 'Name']){
-    return data.map(function(row){
+    return data.map(row => {
       const newRow = {}
-      Object.keys(row).forEach(function(key, idx){
+      Object.keys(row).forEach((key, idx) => {
         if(columns.includes(key)){
           newRow[key] = row[key]
           newRow.Rating = ratings ? ratings[idx] : 0
@@ -121,11 +123,11 @@ export default class StrainData{
     })
   }
 
-  static makeColRanges(strainData, opts={ names:true, zero:false, mean:true, stdev:true }){
+  static makeColRanges(strainData, opts={ names:true, mean:true, stdev:true }){
     const nranges = []
     const N = range(0, StrainData.nRows(strainData), 1)
     const M = range(0, StrainData.nCols(strainData), 1)
-    const rows = strainData.map(function(row){ return Object.values(row) })
+    const rows = strainData.map(row => Object.values(row))
     M.forEach((m)=>{
       nranges[m] = { min:0, max:0, mean:0 }
       N.forEach((n)=>{
@@ -133,7 +135,6 @@ export default class StrainData{
         if(nranges[m].max <= cell) nranges[m].max = cell
         if(nranges[m].min >= cell) nranges[m].min = cell     
         if(opts.mean) nranges[m].mean = (cell/N.length) + nranges[m].mean  
-        if(opts.zero) return null // TODO:: 
       })
     })
     if(opts.names){
@@ -143,39 +144,35 @@ export default class StrainData{
     if(opts.stdev){
       if(!opts.mean){
         M.forEach(m => {
-          nranges[m].mean = mean(N.map(n => rows[n][m]))
+          nranges[m].mean = mean( N.map(n => rows[n][m]) )
         })
       }
       M.forEach(m => {
         const u = nranges[m].mean
-        const X = N.map(n => {
-          return rows[n][m]
-        })
+        const X = N.map(n => rows[n][m])
         nranges[m].stdev = stdev(X,u)
       })
     }
-    strainData.colRanges=nranges
+    strainData.colRanges = nranges
     return nranges
   }
 
-  static normalize(data, method, round=true, columns=['Name']){
+  static normalize(data, method, round=true, factor=1, columns=['Name']){
     const normRows = []
     const strainData = data
-    const colRanges = StrainData.makeColRanges(data, { zero: false, mean: true, stdev: true})
-    strainData.forEach(function(row, n){
+    const colRanges = StrainData.makeColRanges(data, { mean: true, stdev: true })
+    strainData.forEach((row, n) => {
       const newRow = {}
-      Object.keys(row).forEach(function(key, m){
-        const x = row[key]
-        const xcr = colRanges[m]
-        const mean = xcr.mean
-        const max = xcr.max
-        const min = xcr.min
-        const stdev = xcr.stdev
+      Object.keys(row).forEach((key, m) => {
         if(!columns.includes(key)){
-          if(method === 'minmax') newRow[key] = (x - min) / (max - min) * 100 
-          if(method === 'mean') newRow[key] = (x - mean) / (max - min) 
-          if(method === 'zscore') newRow[key] = (x - mean) / stdev 
-          const normval = round ? Math.round(normval) : normval
+          const x = row[key]
+          const xcr = colRanges[m]
+          const mean = xcr.mean
+          const max = xcr.max
+          const min = xcr.min
+          const stdev = xcr.stdev
+          const normval = norm[method]({ x, mean, min, max, stdev}) * factor
+          newRow[key] = round ? Math.round(normval) : normval 
         }else{
           newRow[key] = x
         }
@@ -187,9 +184,9 @@ export default class StrainData{
 
   static rows(strainData){
     const rows = []
-    strainData.forEach((strain) => {
+    strainData.forEach(strain => {
       const row = []
-      Object.keys(strain).forEach((key) => {
+      Object.keys(strain).forEach(key => {
         row.push(strain[key])
       })
       rows.push(row)
@@ -206,8 +203,6 @@ export default class StrainData{
   }
 
   static nCols(strainData){
-    // TODO::
-    // // - More robust check of length
     return Object.keys(strainData[0]).length
   }
 
@@ -223,7 +218,7 @@ export default class StrainData{
     const rows = []
     this.data.forEach((strain, idx) => {
       const row = []
-      Object.keys(strain).forEach((key) => {
+      Object.keys(strain).forEach(key => {
         row.push(strain[key])
       })
       rows.push(row)
@@ -234,10 +229,8 @@ export default class StrainData{
   get colNames(){
     const colNames = []
     this.data.forEach((strain, idx) => {
-      Object.keys(strain).forEach((key) => {
-        if(idx === 0){
-          colNames.push(key)
-        }
+      Object.keys(strain).forEach(key => {
+        if(idx === 0) colNames.push(key)
       })
     })
     return colNames
@@ -300,7 +293,7 @@ export default class StrainData{
   }
 
   set smartTableRatings(smartTableRatings){
-    this.smartTableRatingHeaders = smartTableRatingHeaders
+    this.smartTableRatings = smartTableRatings
   }
 
   get smartTableRatings(){
@@ -320,7 +313,7 @@ export default class StrainData{
   }
 
   set smartTableNormalizedHeaders(smartTableNormalizedHeaders){
-    this.smartTableRatingHeaders = smartTableNormalizedHeaders
+    this.smartTableNormalizedHeaders = smartTableNormalizedHeaders
   }
 
   get smartTableRows(){
@@ -330,25 +323,5 @@ export default class StrainData{
   set smartTableRows(smartTableRows){
     this.smartTableRows = smartTableRows
   }
-
-  // makeCleanData(normalize, percentMax, columns){
-  //   this.cleanData = StrainData.makeCleanData(this.data, normalize, percentMax, columns)
-  //   return this.cleanData
-  // }
-
-  // makeSmartTableHeaders(opts){
-  //   this.smartTableHeaders = StrainData.makeSmartTableHeaders(this.cleanData, opts)
-  //   return this.smartTableHeaders
-  // }
-
-  // makeSmartTableRatingsHeaders(opts){
-  //   this.smartTableRtingsHeaders = StrainData.makeSmartTableRatingsHeaders(this.data, opts)
-  //   return this
-  // }
-
-  // makeSmartTableRatings(ratings, columns){
-  //   this.smartTableRatings = StrainData.makeSmartTableRatings(this.data, ratings, columns)
-  //   return this
-  // }
 
 }

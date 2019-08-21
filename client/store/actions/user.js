@@ -1,5 +1,5 @@
-const config = require('../../../config/config.js')
-const StrainData = require('../StrainData.js').default
+import config from '../../../config/config'
+import StrainData from '../StrainData'
 
 const ON_CHANGE = 'ON_CHANGE'
 const GET_PROFILE = 'GET_PROFILE'
@@ -36,12 +36,10 @@ const userActionCreator = {
       fetch(config.api.path.root + '/user/profile', {
         method: 'GET',
         headers: {
-          'authorization': JWToken,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'authorization': JWToken
         }
       }).then(res => res.json())
-        .then((data) => {
+        .then(data => {
           dispatch({ type: GET_PROFILE, profile: data.data })
         })
     }
@@ -89,12 +87,10 @@ const userActionCreator = {
           ratings: ratings
         }),
         headers: {
-          'authorization': JWToken,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'authorization': JWToken
         }
-      }).then(data => data.json())
-        .then((data) => {
+      }).then(res => res.json())
+        .then(data => {
           const projectList = data.data
           dispatch({ type: UPDATE_PROJECTLIST, projectList })
           dispatch({ type: CLOSE_NEWPROJECTMODAL })
@@ -113,13 +109,11 @@ const userActionCreator = {
         }),
         headers: {
           'authorization': JWToken,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
         }
-      })
-        .then(res => res.json())
+      }).then(res => res.json())
         .then((data) => {
-          dispatch({ type: UPDATE_PROJECTLIST, projectList: data.data })
+          const projectList = data.data
+          dispatch({ type: UPDATE_PROJECTLIST, projectList })
           dispatch({ type: CLOSE_NEWPROJECTMODAL })
         })
     }
@@ -155,15 +149,14 @@ const userActionCreator = {
         headers: {
           'authorization': JWToken
         }
-      })
-        .then(res => res.json())
+      }).then(res => res.json())
         .then(function(data){
-          const message = data.message
-          const strainData = new StrainData(data.data)
+          const { strains, message } = data
+          const strainData = new StrainData(strains)
           dispatch({ 
             type: GET_ALLSTRAINS,  
-            mesage: message, 
-            strainData: strainData
+            strainData,
+            message
           })
         })
     }
@@ -188,28 +181,24 @@ const userActionCreator = {
     return (dispatch, getState) => {
       const { cookies } = getState().login
       const { profile, currentProject } = getState().user
-      const projects = profile.projects  
       const JWToken = cookies.get('jwt')
-      const currentIdx = projects.map((item) => {
-        return item._id === currentProject
-      }).findIndex(function(check){ return !!check })
+      const projects = profile.projects  
+      const pid = id || currentProject
+      const pidx = projects.findIndex(item => item._id === pid)
+      const project = projects[pidx]
+      const model = model || ['dist', 'kmr']
       dispatch({ type: SUBMIT_PROJECT })
       fetch(config.api.path.root + '/api/predict', {
         method: 'POST',
-        body: JSON.stringify({
-          // model: ['dist', 'kmr'],
-          model: 'dist',
-          project: projects[currentIdx]
-        }),
-        headers: {
-          'authorization': JWToken,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(res => res.json())
-        .then(function(data){
-          dispatch({ type: RECEIVE_PROJECTRESULTS, message: data.message, data: data.data })
+        body: JSON.stringify({ model, project }),
+        headers: { 'authorization': JWToken }
+      }).then(res => res.json())
+        .then(data => {
+          dispatch({ 
+            type: RECEIVE_PROJECTRESULTS, 
+            message: data.message, 
+            data: data.data 
+          })
         })
 
       // DIST

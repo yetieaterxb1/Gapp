@@ -24,7 +24,7 @@ function makeRandomString(minLen, maxLen){
   const alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
   const iter = Math.ceil(Math.random() * maxLen)
   let randomString = ''
-  for(let i = minLen; i<=maxLen; i++){
+  for(let i=minLen; i<=maxLen; i++){
     randomString = randomString + alpha[Math.floor(Math.random() * alpha.length)]
   }
   return randomString
@@ -35,7 +35,7 @@ function makeRandomUsers(nUsers){
   const randomUsers = Array.from({length: nUsers}).map(function(x){
     return {
       username: makeRandomString(3, 20),
-      email: makeRandomString(3, 20) + arroba[1],/*arroba[ Math.floor(Math.random() * arroba.length) ],*/
+      email: makeRandomString(3, 20) + arroba[Math.floor(Math.random() * arroba.length)],
       password: 'password'
     }
   })
@@ -87,10 +87,10 @@ exports.Rating = function(clear, callback){
     getUserIDs(User, 100)
     .then(function(userIDs){
       updateUserIDs(userIDs, RATINGS_CSV_PATH, PARSER_PARAMS)
-        .then(function(/*jsonSeed*/ userUpdate){
+        .then(function(userUpdate){
           getStrainIDs(Strain, 100).then(function(strainIDs){
             updateStrainIDs(strainIDs, RATINGS_CSV_PATH, PARSER_PARAMS)
-              .then(function(/*jsonSeed*/ strainUpdate){
+              .then(function(strainUpdate){
                 const seed = strainUpdate
                 for(i in seed){
                   const user = userUpdate[i].User

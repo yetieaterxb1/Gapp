@@ -1,33 +1,24 @@
-import React, { Component } from 'react'
+import React from 'react'
 
-class Whirlpool extends Component{
-  render(){
-    return(
-      <div className="whirlpool">
-        <div className="ring ring1"></div>
-        <div className="ring ring2"></div>
-        <div className="ring ring3"></div>
-        <div className="ring ring4"></div>
-        <div className="ring ring5"></div>
-        <div className="ring ring6"></div>
-        <div className="ring ring7"></div>
-        <div className="ring ring8"></div>
-        <div className="ring ring9"></div>
-      </div>
-    )
-  }
+const randomRGB = () => {
+
 }
+const randomRingColors = () => {
 
-export default class Loader extends Component {
-  constructor(props){
-    super(props)
-  }
-  render() {
-    return (
-      <div id='loader' style={{display: this.props.display ? 'initial' : 'none' }}>
-        <Whirlpool/>
+}
+const makeRings = (n, styles) => {
+  const N = Array.from({length:n},(v,i)=>i+1)
+  return N.map(r => <div key={r} className={'ring ' + 'ring' + r} style={styles[n]}></div>)
+}
+const WhirlpoolLoader = props => {
+  return (
+    <div id='loader' style={{display: props.display ? 'initial' : 'none' }}>
+      <div className="whirlpool">
+        {
+          makeRings(9, null)
+        }
       </div>
-    )
-  }
+    </div>
+  )
 }
 

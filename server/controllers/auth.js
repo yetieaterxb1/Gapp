@@ -49,7 +49,7 @@ function signup(req,res,next){
     if(err){
       next(err)
     }else if(!user){
-      var user = new User(creds)
+      const user = new User(creds)
       user.save(function(err, doc, num) {
         if(!err){
           req.login(creds, function(err){

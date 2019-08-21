@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import SwipeableViews from 'react-swipeable-views'
 
@@ -13,146 +13,154 @@ import Box from '@material-ui/core/Box'
 import SmartTable from '../Common/SmartTable'
 
 import userActionCreator from '../../store/actions/user.js'
-import { pathToFileURL } from 'url';
 
-
-function a11yProps(index) {
+const a11yProps = index => {
   return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
+    id: `full-width-tab-${ index }`,
+    'aria-controls': `full-width-tabpanel-${ index }`,
   }
 }
 
-function swipeDir(curIdx, preIdx){
+const swipeDir = (curIdx, preIdx) =>{
   return curIdx - preIdx > 0 ? 'rtl' : 'ltr'
 }
 
-const TabPanel = (props) => {
-  const { children, value, index, collapse } = props
+const swipeAxis = (curIdx, preIdx) => {
+  const isRtl = swipeDir(curIdx, preIdx) === 'rtl'
+  return isRtl ? 'x-reverse' : 'x'
+}
+
+const TabPanel = ({ children, collapse }) => {
   return (
-    <Grid item xs={ collapse ? 9:12 }> {children} </Grid>
+    <Grid item xs={ collapse ? 9:12 }> { children } </Grid>
   )
 }
 
-class ProjectPanel extends Component {
-  constructor(props){
-    super(props)
-    this.state = { rating: false }
-    this.props.getAllStrains()
-  }
-  render() {
-    const { 
-      strainData,
-      submitProject,
-      profile,
-      setRating,
-      currentProject,
-      currentProjectTab,
-      previousProjectTab,
-      setCurrentProjectTab,
-      toggleStrainDataModal
-    } = this.props
-    const { isLoading, cleanData, smartTableRatingsHeaders, nCleanRows } = strainData
-    const { rowIds } = cleanData
-    const projects = profile.projects
-    const currentIdx = projects ? projects.findIndex(item => item._id === currentProject ) : []
-    const project = projects ? projects[currentIdx] : false
-    const data = project ? project.ratings : []
-    const results = project ? project.results : false
-    return(
-      !project ? null :
-      <Slide in={!!project} direction={ 'up' } mountOnEnter unmountOnExit>
+const DistResult = ({ data, title }) => {
+  return (
+    <Box>
+      <h2> { title } </h2>
+      { 
+        Object.keys(data).map((uid, uidx) => {
+          return(
+            <div key={uidx}> 
+              { 
+                Object.keys(data[uid]).map((rid, ridx) => {
+                  return (
+                    <div key={ridx}>
+                      <h4> { rid } </h4>
+                      <p> { data[uid][rid] } </p>
+                    </div>
+                  )
+                }) 
+              }
+            </div>
+          )
+        })
+      }
+    </Box>
+  )
+}
+
+const KmrResult = ({ data, title }) => {
+  return (
+    <Box>
+      <h2> { title } </h2>
+      {
+        data.map((rid) => {
+          return <h3 key={rid}> { rid } </h3>
+        })
+      }
+    </Box>
+  )
+}
+
+const RenderResult = ({ name, data, titles, children }) => {
+  const title = titles[name]
+  const result = {
+    'dist': (d, t) => <DistResult data={ d } title={ t } /> ,
+    'kmr': (d, t) => <KmrResult data={ d }  title={ t }/>
+  }[name](data, title)
+  return data ? result : children
+}
+
+const ResultsBody = props => {
+  const { results, titles, children } = props
+  return (
+    <Box>
+      { results && results.map((model, midx) => {
+          return Object.keys(model).map((name, nidx)=>{
+            return (
+              <RenderResult name={ name } data={ model[name] } titles={ titles }> 
+                { children || <p> No results to display </p> }
+              </RenderResult>
+            )
+          })
+        }) 
+      }
+    </Box>
+  )
+}
+
+const ProjectPanel = props => {    
+  const { 
+    strainData,
+    submitProject,
+    profile,
+    setRating,
+    currentProject,
+    currentProjectTab,
+    previousProjectTab,
+    setCurrentProjectTab,
+    toggleStrainDataModal
+  } = props
+  const { cleanData, smartTableRatingsHeaders } = strainData
+  const { rowIds } = cleanData
+  const projects = profile.projects
+  const currentIdx = projects ? projects.findIndex(item => item._id === currentProject ) : []
+  const project = projects ? projects[currentIdx] : false
+  const data = project ? project.ratings : []
+  const results = project ? project.results : false
+  const handleTabChange = (e,i) => { setCurrentProjectTab(i) }
+  const handleSubmit = e => { submitProject(currentProject) }
+  const handleCellChange = (id, val)=>{ setRating(currentProject, id, val) }
+  const handleCellClick = (e, rowId)=>{ toggleStrainDataModal(rowId) }
+  return(
+    project &&
+      <Slide in={ !!project } direction={ 'up' } mountOnEnter unmountOnExit>
         <Box>
-          <Tabs
-            value={ currentProjectTab }
-            indicatorColor="primary"
-            textColor="primary"
-            variant='fullWidth'
-            onChange={ (evt,idx) => { setCurrentProjectTab(idx) } }
-          >
-            <Tab label="Strains" {...a11yProps(0)} />
-            <Tab label="Results" {...a11yProps(1)} />
+          <Tabs value={ currentProjectTab } onChange={ handleTabChange } indicatorColor='primary' textColor='primary' variant='fullWidth' >
+            <Tab label='Strains' { ...a11yProps(0) } />
+            <Tab label='Results' { ...a11yProps(1) } />
           </Tabs>
-          
           <SwipeableViews
-            axis={ swipeDir(currentProjectTab, previousProjectTab) === 'rtl' ? 'x-reverse' : 'x' }
+            axis={ swipeAxis(currentProjectTab, previousProjectTab) }
             index={ currentProjectTab }
             onChangeIndex={ setCurrentProjectTab }
           >
             <TabPanel index={ 0 } value={ currentProjectTab }>
-              <Button color='primary' variant="contained" style={{width: '100%'}} onClick={ () => { submitProject(currentProject)} }> Submit </Button>
+              <Button color='primary' variant="contained" style={{width: '100%'}} onClick={ handleSubmit }> Submit </Button>
               <SmartTable
-                isLoading={ isLoading }
+                isLoading={ !data || !rowIds || !smartTableRatingsHeaders }
                 data={ data }
                 headers={ smartTableRatingsHeaders }
                 rowIds={ rowIds }
                 limit={ 10 }
                 total={ rowIds && rowIds.length }
-                cellChange={
-                  (id, val)=>{
-                    setRating(currentProject, id, val)
-                    this.setState({ rating: !this.state.rating })
-                  }
-                }
-                cellClick={ 
-                  (e, rowId)=>{
-                    toggleStrainDataModal(rowId)
-                  }
-                }
+                cellChange={ handleCellChange }
+                cellClick={ handleCellClick }
               />
             </TabPanel>
             <TabPanel index={ 2 } value={ currentProjectTab }>
-              <div style={ {display: !results ? 'initial':'none', width:'200px', padding: '48px', marginLeft: '110px', justifyContent: 'center'} }>
-                <CircularProgress />
-              </div>
-              { results && results.map((model, midx) => {
-                  let modelName
-                  const modelResult = Object.keys(model).map((name, nidx)=>{
-                    modelName = name
-                    let modelResult
-                    if(name === 'dist'){
-                      modelResult = Object.keys(model[name]).map((uid, uidx) => {
-                        return(
-                          <div key={uidx}> 
-                            { 
-                              Object.keys(model[name][uid]).map((rid, ridx) => {
-                                return (
-                                  <div key={ridx}>
-                                    <h4> { rid } </h4>
-                                    <p> { model[name][uid][rid] } </p>
-                                  </div>
-                                )
-                              }) 
-                            }
-                          </div>
-                        )
-                      })
-                    }
-                    if(name === 'kmr'){
-                      modelResult = model[name].map((rid) => {
-                        return <h3 key={rid}> { rid } </h3>
-                      })
-                    }
-                    return(
-                      <div key={nidx}>
-                        { modelResult }
-                      </div>
-                    )
-                  })
-                  return(
-                    <div key={midx}>
-                      <h2> { modelName } </h2>
-                      <div> { modelResult } </div>
-                    </div>
-                  )
-                }) 
+              { isLoading ? 
+                  <CircularProgress /> : 
+                  <ResultsBody results={ results } titles={{ dist: 'Dist', kmr: 'KMR' }}/>
               }
             </TabPanel>
           </SwipeableViews>
         </Box>
       </Slide>
-    )
-  }
+  )
 }
 
 const mapStateToProps = (state, ownProps) => {
