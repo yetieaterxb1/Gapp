@@ -5,6 +5,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import Slide from '@material-ui/core/Slide'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Avatar from '@material-ui/core/Avatar'
@@ -66,7 +67,9 @@ const ProjectListItems = (props) => {
                   <FolderIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={ proj.name } secondary={ (new Date(proj.updated)).toLocaleDateString() } />
+              <Slide in={!!proj.name} direction={ 'right' } mountOnEnter unmountOnExit>
+                <ListItemText primary={ proj.name } secondary={ (new Date(proj.updated)).toLocaleDateString() } />
+              </Slide>
               <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="delete" onClick={ ()=>{ onDelete(proj._id) } }>
                   <DeleteIcon />

@@ -17,12 +17,13 @@ function projectController(req, res, next){
     case 'create': {
       const userId = req.user._id
       const name = req.body.name
-      if(!name) return res.end() // TODO:: send error message
+      const ratings = req.body.ratings
       const created = new Date(Date.now())
       const project = {
         name: name,
         created: created,
-        updated: created
+        updated: created,
+        ratings: ratings
       }
       return User.findByIdAndUpdate(
         userId,

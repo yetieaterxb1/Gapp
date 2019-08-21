@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import TableRow from '@material-ui/core/TableRow'
-import TableCell from '@material-ui/core/TableCell'
 
 import formatTableCell from './formatTableCell'
 
@@ -12,7 +11,6 @@ import userActionCreator from '../../../../store/actions/user.js'
 class SmartTableRow extends Component {
   constructor(props){
     super(props)
-    this.handleRowClick = this.handleRowClick.bind(this)
   }
 
   isRowSelected(rowId, profile, currentProject) {
@@ -25,31 +23,24 @@ class SmartTableRow extends Component {
     }else{
       isSelected = false
     }
+    console.log('isSelected???', isSelected)
     return isSelected
   }
 
-  handleRowClick(){
-    const { rowId, profile, currentProject, addIdToProject, removeIdFromProject } = this.props
-    if(this.isRowSelected(rowId, profile, currentProject)){
-      removeIdFromProject(rowId)
-    }else{
-      addIdToProject(rowId)
-    }
-  }
+
 
   render(){
-    const { row, rowId, headers, currentProject, profile, checkbox } = this.props
-    const highlightRow = this.isRowSelected(rowId, profile, currentProject) ? 'tomato':'transparent'
+    const { row, rowId, headers, currentProject, profile } = this.props
+    const highlightRow = row.Rating > 3 ? 'rgba(110, 226, 135, 0.37)':'transparent'
     return(
       <TableRow 
-        style={ {backgroundColor: highlightRow } }
-        onClick={ (e) => { this.handleRowClick(rowId) } }
+        style={ { border: '3px solid ' + highlightRow } }
       >
-        { headers.map((header, propIndex) => (
-          <TableCell key={ propIndex } >
-            { formatTableCell(row[header.dataAlias], header.format) }
-          </TableCell>
-        )) }
+        { 
+          headers.map((header, propIndex) => (
+            formatTableCell(row[header.dataAlias], header.format, propIndex, this.props ) 
+          )) 
+        }
       </TableRow>
     )
   }

@@ -15,7 +15,6 @@ const STOP_LOADING = 'STOP_LOADING'
 const loginActionCreator = {
   setCookieProvider: (provider) => {
     return (dispatch, getState) => {
-      console.log(provider)
       dispatch({ type:SET_COOKIEPROVIDER, provider: provider })
     }
   },
@@ -53,11 +52,8 @@ const loginActionCreator = {
         })
         .then((data) => {
           const { jwt, isAuthenticated, message } = data
-          console.log('isAuthed', isAuthenticated)
-          console.log('jwt.success', jwt.success)
           const isAuthed = isAuthenticated && jwt.success
           if(isAuthed){
-            console.log(cookies)
             cookies.set('jwt', jwt.token, { path: '/' })
             setTimeout(function(){
               dispatch({

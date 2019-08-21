@@ -87,7 +87,9 @@ class SmartTable extends Component {
       total,
       headers,
       isLoading,
-      rowIds
+      rowIds,
+      cellClick,
+      cellChange
     } = this.props
 
     const {
@@ -131,6 +133,8 @@ class SmartTable extends Component {
                 row={ row }
                 headers={ headers }
                 rowId={ rowIds[index] }
+                cellClick={ cellClick }
+                cellChange={ cellChange }
               />
             ))
           }

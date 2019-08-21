@@ -14,6 +14,7 @@ import Loader from '../Common/Loader'
 import ProjectList from './ProjectList'
 import ProjectPanel from './ProjectPanel'
 import NewProjectModal from './NewProjectModal'
+import StrainDataModal from './StrainDataModal'
 
 
 import loginActionCreator from '../../store/actions/login.js'
@@ -65,6 +66,7 @@ class Home extends Component {
       <Box maxWidth='100vw'>
         <Loader display={ isLoading } />
         <NewProjectModal cookies={ cookies }/>
+        <StrainDataModal />
         <Appbar cookies={ cookies } />
         <Grid container direction='row' alignItems='flex-start' spacing={ 3 } size='small'>
           <Slide in={ showProjectList } direction='right' mountOnEnter unmountOnExit>

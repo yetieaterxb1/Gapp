@@ -1,17 +1,24 @@
 const config = require('../../../config/config.js')
+const StrainData = require('../StrainData.js').default
 
 const ON_CHANGE = 'ON_CHANGE'
 const GET_PROFILE = 'GET_PROFILE'
 const SET_CURRENTPROJECTTAB = 'SET_CURRENTPROJECTTAB'
 const OPEN_PROJECT = 'OPEN_PROJECT'
 const TOGGLE_PROJECTLIST = 'TOGGLE_PROJECTLIST'
+const TOGGLE_STRAINDATAMODAL = 'TOGGLE_STRAINDATAMODAL'
+const CLOSE_STRAINDATAMODAL = 'CLOSE_STRAINDATAMODAL'
+const SET_CURRENTSTRAIN = 'SET_CURRENTSTRAIN'
 const SHOW_PROJECTLIST = 'SHOW_PROJECTLIST'
 const HIDE_PROJECTLIST = 'HIDE_PROJECTLIST'
 const CREATE_NEWPROJECT = 'CREATE_NEWPROJECT'
 const TOGGLE_NEWPROJECTMODAL = 'TOGGLE_NEWPROJECTMODAL'
 const CLOSE_NEWPROJECTMODAL = 'CLOSE_NEWPROJECTMODAL'
+const SUBMIT_PROJECT = 'SUBMIT_PROJECT'
+const RECEIVE_PROJECTRESULTS = 'RECEIVE_PROJECTRESULTS'
 const GET_ALLSTRAINS = 'GET_ALLSTRAINS'
 const GET_STRAINNAMEBYID = 'GET_STRAINNAMEBYID'
+const SET_RATING = 'SET_RATING'
 const ADD_IDTOPROJECT = 'ADD_IDTOPROJECT'
 const REMOVE_IDFROMPROJECT = 'REMOVE_IDFROMPROJECT'
 const UPDATE_PROJECTLIST = 'UPDATE_PROJECTLIST'
@@ -68,14 +75,18 @@ const userActionCreator = {
   createNewProject: (name) => {
     return (dispatch, getState) => {
       const { cookies } = getState().login
+      const { strainData } = getState().user
       const JWToken = cookies.get('jwt')
+      const ratings = strainData.smartTableRatings
       name = projectname.value || name
       dispatch({ type: CREATE_NEWPROJECT })
+      dispatch({ type: SHOW_PROJECTLIST })
       fetch(config.api.path.root + '/user/project', {
         method: 'POST',
         body: JSON.stringify({
           method: 'create',
-          name: name
+          name: name,
+          ratings: ratings
         }),
         headers: {
           'authorization': JWToken,
@@ -84,7 +95,8 @@ const userActionCreator = {
         }
       }).then(data => data.json())
         .then((data) => {
-          dispatch({ type: UPDATE_PROJECTLIST, projectList: data.data })
+          const projectList = data.data
+          dispatch({ type: UPDATE_PROJECTLIST, projectList })
           dispatch({ type: CLOSE_NEWPROJECTMODAL })
         })
     }
@@ -93,7 +105,6 @@ const userActionCreator = {
     return (dispatch, getState) => {
       const { cookies } = getState().login
       const JWToken = cookies.get('jwt')
-      
       fetch(config.api.path.root + '/user/project', {
         method: 'POST',
         body: JSON.stringify({
@@ -108,7 +119,6 @@ const userActionCreator = {
       })
         .then(res => res.json())
         .then((data) => {
-          console.log('RES data:', data.projectList)
           dispatch({ type: UPDATE_PROJECTLIST, projectList: data.data })
           dispatch({ type: CLOSE_NEWPROJECTMODAL })
         })
@@ -124,6 +134,18 @@ const userActionCreator = {
       dispatch({ type: CLOSE_NEWPROJECTMODAL})
     }
   },
+  toggleStrainDataModal: (id) => {
+    return (dispatch, getState) => {
+      dispatch({ type: SET_CURRENTSTRAIN, id })
+      dispatch({ type: TOGGLE_STRAINDATAMODAL, id })
+    }
+  },
+  closeStrainDataModal: () => {
+    return (dispatch, getState) => {
+      dispatch({ type: SET_CURRENTSTRAIN, id:false })
+      dispatch({ type: CLOSE_STRAINDATAMODAL, id:false })
+    }
+  },
   getAllStrains: () => {
     return (dispatch, getState) => {
       const { cookies } = getState().login
@@ -137,23 +159,11 @@ const userActionCreator = {
         .then(res => res.json())
         .then(function(data){
           const message = data.message
-          const raw = data.data
-          const colNames = []
-          const rows = []
-          raw.forEach((strain, idx) => {
-            const row = []
-            Object.keys(strain).forEach((key) => {
-              if(idx === 0){
-                colNames.push(key)
-              }
-              row.push(strain[key])
-            })
-            rows.push(row)
-          })
+          const strainData = new StrainData(data.data)
           dispatch({ 
             type: GET_ALLSTRAINS,  
             mesage: message, 
-            strainData: { raw, colNames, rows }
+            strainData: strainData
           })
         })
     }
@@ -168,6 +178,12 @@ const userActionCreator = {
       dispatch({ type: REMOVE_IDFROMPROJECT, id })
     }
   },
+  setRating: (proj, id, val) => {
+    return (dispatch, getState) => {
+      const profile = getState().user.profile
+      dispatch({ type: SET_RATING, profile, proj, id, val })
+    }
+  },
   submitProject: (id) => {
     return (dispatch, getState) => {
       const { cookies } = getState().login
@@ -177,11 +193,11 @@ const userActionCreator = {
       const currentIdx = projects.map((item) => {
         return item._id === currentProject
       }).findIndex(function(check){ return !!check })
-      // DIST
-      console.log('sent project', projects[currentIdx])
+      dispatch({ type: SUBMIT_PROJECT })
       fetch(config.api.path.root + '/api/predict', {
         method: 'POST',
         body: JSON.stringify({
+          // model: ['dist', 'kmr'],
           model: 'dist',
           project: projects[currentIdx]
         }),
@@ -193,8 +209,26 @@ const userActionCreator = {
       })
         .then(res => res.json())
         .then(function(data){
-          dispatch({ type: 'SUBMIT_PROJECT', message: data.message, data: data.data })
+          dispatch({ type: RECEIVE_PROJECTRESULTS, message: data.message, data: data.data })
         })
+
+      // DIST
+      // fetch(config.api.path.root + '/api/predict', {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     model: 'dist',
+      //     project: projects[currentIdx]
+      //   }),
+      //   headers: {
+      //     'authorization': JWToken,
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json'
+      //   }
+      // })
+      //   .then(res => res.json())
+      //   .then(function(data){
+      //     dispatch({ type: 'SUBMIT_PROJECT', message: data.message, data: data.data })
+      //   })
 
       // KMR
       // fetch(config.api.path.root + '/api/predict', {

@@ -60,13 +60,11 @@ getRecommendedStrains<-function(dfc, dfr, userId, select.new=T){
   like<-getMeanClusterRating(strainCluster, userRatings)
   recommend<-getGoodStrains(like, strainCluster, dfc)
   if(select.new){
-  #   recommend <- recommend[!(recommend %in% userRatings$Strain)]
-      idx <- sapply(recommend, function(rec){
-        !any(userRatings == rec)
-      })
-      recommend <- recommend[idx]
+    idx <- sapply(recommend, function(rec){
+      !any(userRatings == rec)
+    })
+    recommend <- recommend[idx]
   }
   return(recommend)
 }
-# getRecommendedStrains(dataset.complete, dataset.ratings, 5)
 

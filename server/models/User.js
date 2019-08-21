@@ -13,6 +13,9 @@ const _projectSchema = new Schema({
   likedIds: {
     type: Array,
   },
+  ratings: {
+    type: Object
+  },
   created: {
     type: Date
   },

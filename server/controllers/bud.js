@@ -4,7 +4,7 @@ const Budr = require('../api/budr')
 const Strain = require('../models/Strain')
 const Rating = require('../models/Rating')
 
-const budr = new Budr()
+// const budr = new Budr()
 
 function genEnsembleArgs(req){
   return {
@@ -13,14 +13,15 @@ function genEnsembleArgs(req){
         const likedIds = req.body.project.likedIds
         Strain.find({_id: { $in: likedIds }}, '-Name -__v', function(err, strains){
           Strain.find({}, '-Name -__v', function(err, dfc){
+            const budr = new Budr()
             budr.predict({
               model: item,
               dfc: dfc,
               userStrains: strains
             }).call(function(err, data){
               console.log('R result: ' + item + ': ', data)
-              console.log('R error: ' + item + ': ', err)
-              return !!err ? done(err) : done(data)
+              console.log('R error: ' + item + ': ', err ? err.toString() : null)
+              done(null, data)
             })
           })
         })
@@ -34,6 +35,7 @@ function genEnsembleArgs(req){
         const id = req.user._id
         Strain.find({}, '-Name -__v', function(err, dfc){
           Rating.find({}, '-Name -__v', function(err, dfr){
+            const budr = new Budr()
             budr.predict({
               model: item, 
               dfc: dfc, 
@@ -41,26 +43,26 @@ function genEnsembleArgs(req){
               id: id
             }).call(function(err, data){
               console.log('R result: ' + item + ': ', data)
-              console.log('R error: ' + item + ': ', err)
-              return err ? done(err) : done(data)
+              console.log('R error: ' + item + ': ', err ? err.toString() : null)
+              done(null, data)
             })
           })
         })
       },
       parms: {
-        // TODO::
+
       }
     }
   }
 }
 
-function mapModels(models=['dist', 'kmr'], args){
+function mapModels(models=['dist', 'kmr'], args, callback){
   const iter = function(item, done){ 
     const doMap = args[item].doMap
     const parms = args[item].parms
     doMap(parms, item, done)
   }
-  return async.map(models, iter)
+  return async.map(models, iter, callback)
 }
 
 function genCallback(req, res, next, errStatus=204, errMessage='Server error.', okStatus=302, okMessage='Query successful.') {
@@ -97,19 +99,21 @@ const strainController = function(req, res, next){
 
 const predictController = function(req, res, next){
   const model = req.body.model
-  const ensemble = model ? model.split(',') || [model] : false
+  const ensemble = Array.isArray(model) ? model : model.split(',')
+  console.log(ensemble)
   if(ensemble){
     const eargs = genEnsembleArgs(req)
     mapModels(ensemble, eargs)
-      .then(function(){
+      .then(function(data){
         // No error is thrown here.
+        genCallback(req, res, next)(false, data)
       })
-      .catch(function(thisIsActuallyData){
+      .catch(function(err){
         // The async.map call inside of mapModels throws an error even when async.map([1,2,3], (item, done)=>{ done(true) }).
         // I think the async.map iterator must return a value rather than calling done(value), because I think done() is only used to pass errors.
         // The problem is that the r-script .call() method does not return a value for async.map to poulate its results.
         // The only solution I can think of is to use the r-script .callSync() method, which does return a value. I've not yet tested if this idea works.
-        genCallback(req, res, next)(false, thisIsActuallyData)
+        genCallback(req, res, next)(err, null)
       })
   }else{
     genCallback(req,res,next)(true, null)
