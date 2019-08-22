@@ -21,8 +21,8 @@ fetch('/login', {
 
 The directions below describe all steps needed to install and run the app.
 
-Note: 
-  
+Note:
+
 * The app requires NodeJS and `npm` to be installed.
     - https://nodejs.org/en/download/
 
@@ -49,14 +49,14 @@ Close the terminal window after you run `mongod` and open a new terminal window 
 You can choose to start in either production or development mode. Choose from one of the following options.
 
 #### 3.1 In development mode (recommended)
-To start in development mode, enter the following command. 
+To start in development mode, enter the following command.
 
 `npm run start:dev`
 
 This command builds the client bundle with `webpack --watch` and starts the node server with `nodemon` .
- 
+
  #### 3.2 In development mode with hot module replacement (not recommended)
-HMR requires a proxy, which is not configured right now. 
+HMR requires a proxy, which is not configured right now.
 
 `npm run start:dev-server`
 
@@ -70,7 +70,7 @@ After starting the server, you should see the following output in your terminal.
 
 ```
 Listening on port 8000.
-MongoDB conection successful. 
+MongoDB conection successful.
 ```
 
 To open the app, copy/paste `localhost:8000` into your browser's URL bar.
@@ -129,3 +129,5 @@ POST <br>
     })
 </code>
 </details>
+
+Test
