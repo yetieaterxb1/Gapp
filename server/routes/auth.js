@@ -14,8 +14,9 @@ router.route('/login')
 
 router.route('/login/auth')
   .get(passport.authenticate('jwt'), function(req, res){ 
-    const isAuthenticated = req.isAuthenticated 
-    if(!isAuthenticated) return res.status(401).json({ isAuthenticated })
+    const isAuthenticated = req.isAuthenticated() 
+    console.log(isAuthenticated)
+    if(!isAuthenticated) return res.status(401).send({ isAuthenticated: isAuthenticated })
     return res.status(200).json({ isAuthed })
   })
   .post(passport.authenticate('local', { session:false }), login)

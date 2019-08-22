@@ -1,3 +1,22 @@
+fetch('/login', {
+          method: 'POST',
+          body: JSON.stringify({
+            username: username.value, // admin 
+            password: password.value // password
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(res => res.json())
+        .then(data => {
+          const { jwt, isAuthenticated, message } = data
+          console.log('The jwt object: ', jwt)
+          console.log('API_KEY', jwt.token)
+          console.log('The user that is tokenized:', jwt.user)
+          console.log('Was tokenization successful?', jwt.success)
+        })
+
 # Getting started
 
 The directions below describe all steps needed to install and run the app.

@@ -127,15 +127,19 @@ const loginActionCreator = {
       console.log('COOKIES checkAuth jwt', JWToken)
       !JWToken ?
         dispatch({ type: IS_AUTHED, isAuthenticated: false }) :
-        fetch(config.api.path.root + '/user', {
+        fetch(config.api.path.root + '/login/auth', {
           method: 'GET',
           headers: {
             'authorization': JWToken,
             'Content-Type': 'application/json'
           }
-        }).then(res => {
-          console.log('then checkAuth isAuthed', res.isAuthenticated)
-          res.isAuthenticated ?
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data)
+          const { isAuthenticated } = data
+          console.log('then checkAuth isAuthed', isAuthenticated)
+          isAuthenticated ?
             dispatch({ type: IS_AUTHED, isAuthenticated: true }) :
             dispatch({ type: IS_AUTHED, isAuthenticated: false })
         })

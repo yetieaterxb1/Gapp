@@ -23,7 +23,7 @@ function login(req, res, next){
   }else{
     res.status(401).send({
       jwt: null,
-      isAuthenticated: isAuthed,
+      isAuthenticated: isAuthed || false,
       message: 'Incorrect username or password.'
     })
   }

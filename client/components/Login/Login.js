@@ -42,10 +42,10 @@ const Login = props => {
 
   useEffect(()=>{
     console.log(props)
-    // setCookieProvider(cookies, true)
-    
-    // checkAuth()
-  }, [])
+    setCookieProvider(cookies, true)
+    checkAuth()
+    console.log(props)
+  })
 
   const handleKeyPress = e => {
     if (e.key === 'Enter') {

@@ -28,7 +28,6 @@ const Home = props => {
     currentProject, setCookieProvider, checkAuth, getProfile, width
   } = props
   useEffect(()=>{
-
     setCookieProvider(cookies, true)
     console.log(props)
   },[])
