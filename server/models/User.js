@@ -14,7 +14,8 @@ const _projectSchema = new Schema({
     type: Array,
   },
   ratings: {
-    type: Object
+    type: Object,
+    default: {}
   },
   created: {
     type: Date
@@ -56,8 +57,7 @@ const userSchema = new Schema({
   },
   projects: {
     type: [ _projectSchema ],
-    default: undefined,
-    required: false
+    default: []
   }
 }, { minimize: false })
 

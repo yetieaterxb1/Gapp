@@ -17,13 +17,13 @@ const isRowSelected = (rowId, projects, currentProject) => {
 }
 
 const SmartTableRow = props => {
-  const { row, headers } = this.props
+  const { row, headers } = props
   const highlightRow = row.Rating > 3 ? 'rgba(110, 226, 135, 0.37)' : 'transparent'
   return(
     <TableRow style={ { border: '3px solid ' + highlightRow } }>
       { 
         headers.map((header, propIndex) => (
-          formatTableCell(row[header.dataAlias], header.format, propIndex, this.props ) 
+          formatTableCell(row[header.dataAlias], header.format, propIndex, props ) 
         )) 
       }
     </TableRow>

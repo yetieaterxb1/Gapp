@@ -25,15 +25,13 @@ const widthQuery = (width, accept) => {
 const Home = props => {
   const {
     cookies, isAuthenticated, isLoading, profile, showProjectList, 
-    currentProject, setCookieProvider, checkAuth, getProfile,
+    currentProject, setCookieProvider, checkAuth, getProfile, width
   } = props
-
   useEffect(()=>{
-    checkAuth()
-    setCookieProvider(cookies)
-    getProfile()
-  }, [cookies, isAuthenticated])
 
+    setCookieProvider(cookies, true)
+    console.log(props)
+  },[])
   return (
     !isAuthenticated ?
       <Redirect to='/login' /> :
@@ -44,9 +42,9 @@ const Home = props => {
         <Appbar cookies={ cookies } />
         <Grid container direction='row' alignItems='flex-start' spacing={ 3 } size='small'>
           <Slide in={ showProjectList } direction='right' mountOnEnter unmountOnExit>
-              <Grid item xs={12} sm={ 12 } md={ 3 } lg={ 3 } style={{ height: widthQuery(this.props.width, ['sm']) ? '100vh' : '40vh', width:'100%' }} >
-                <ProjectList cookies={ cookies } />
-              </Grid>
+              <Grid item xs={12} sm={ 12 } md={ 3 } lg={ 3 } style={{ height: widthQuery(width, ['sm']) ? '100vh' : '40vh', width:'100%' }} >
+                <ProjectList cookies={ cookies } /> 
+              </Grid> 
           </Slide>
           <Grid item xs={ 12 } hidden={ !currentProject }> 
             <ProjectPanel 
@@ -55,7 +53,7 @@ const Home = props => {
               projects={ profile.projects }
             />
           </Grid>
-        </Grid>
+        </Grid> 
       </Box>
   )
 }

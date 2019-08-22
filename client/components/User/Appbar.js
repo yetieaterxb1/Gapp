@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
+import Typography from '@material-ui/core/Typography'
 
 import loginActionCreator from '../../store/actions/login.js'
 import userActionCreator from '../../store/actions/user.js'
@@ -28,6 +29,9 @@ const styles = theme => ({
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
+  },
+  logoutButton: {
+    float: 'right'
   }
 })
 
@@ -51,6 +55,7 @@ function ButtonAppBar(props) {
           <Fab className={ classes.addFab } style={{ display: displayProjectList ? 'none' : null }} onClick={ toggleNewProjectModal } color="secondary">
             <AddIcon />
           </Fab>
+          <Typography variant='h6' color='inherit' className={ classes.grow }>  </Typography>
           <Button color='inherit' onClick={ submitLogout }> Logout </Button>
         </Toolbar>
       </AppBar>

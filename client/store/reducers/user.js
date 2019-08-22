@@ -66,6 +66,7 @@ const userReducer = (state=INIT_STATE, action) => {
     }
     case 'UPDATE_PROJECTLIST': {
       const { projectList } = action
+      console.log('UPDATE_PROJECTLIST', projectList)
       return Object.assign({}, state, { profile: { projects: projectList }, projectListIsLoading: false })
     }
     case 'GET_ALLSTRAINS': {
@@ -80,10 +81,10 @@ const userReducer = (state=INIT_STATE, action) => {
       return Object.assign({}, state, { profile: { projects: updatedProjects }, ...state })
     }
     case 'SET_RATING': {
-      const { profile, id, val } = action
+      const { id, val, profile, currentProject } = action
       const { projects } = profile
-      const pidx = projects.filter(item => item._id === id)
-
+      const pidx = projects.findIndex(item => item._id === currentProject)
+      
       const ratings = projects[pidx].ratings
       const ridx = ratings.findIndex(rating => rating._id === id)
       projects[pidx].ratings[ridx].Rating = val
@@ -91,7 +92,7 @@ const userReducer = (state=INIT_STATE, action) => {
       const likedIds = projects[pidx].likedIds
       projects[pidx].likedIds = val>3 ? likedIds.concat(id) : likedIds.filter(bi => id === bi)
       
-      return Object.assign({}, { profile: { projects: projects }})
+      return Object.assign({}, state, { profile: { projects: projects }})
     }
     case 'REMOVE_IDFROMPROJECT': {
       const { id } = action

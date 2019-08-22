@@ -39,7 +39,8 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const ListAddButton = ({ key }) => {
+const ListAddButton = props => {
+  const { key } = props
   return(
     <ListItem key={ key || 0 } >
       <Button {...props} style={{ margin:'auto', width: '60%' }} variant='contained' color='secondary' > 

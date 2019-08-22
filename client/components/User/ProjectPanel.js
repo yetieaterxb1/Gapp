@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import SwipeableViews from 'react-swipeable-views'
 
@@ -11,6 +11,7 @@ import Slide from '@material-ui/core/Slide'
 import Box from '@material-ui/core/Box'
 
 import SmartTable from '../Common/SmartTable'
+import CustomSlider from './CustomSlider'
 
 import userActionCreator from '../../store/actions/user.js'
 
@@ -102,8 +103,34 @@ const ResultsBody = props => {
   )
 }
 
+const CUSTOM_FEATURES = [
+  {
+    label: 'THC',
+    type: 'CustomSlider',
+    props: {
+
+    }
+  },
+  { label: 'CBD',
+    type: 'CustomSlider',
+    props: {
+
+    }
+  }
+]
+
+const CustomSliderGroup = props => {
+  const { features } = props
+  return (
+    features.map(feat => {
+      React.createElement(feat.type, feat.props, null)
+    })
+  )
+}
+
 const ProjectPanel = props => {    
   const { 
+    cookies,
     strainData,
     submitProject,
     profile,
@@ -111,27 +138,33 @@ const ProjectPanel = props => {
     currentProject,
     currentProjectTab,
     previousProjectTab,
+    getAllStrains,
     setCurrentProjectTab,
     toggleStrainDataModal
   } = props
-  const { cleanData, smartTableRatingsHeaders } = strainData
+  useEffect(()=>{
+    console.log(cookies)
+    getAllStrains()
+  }, [])
+  const { cleanData, smartTableRatingsHeaders, smartTableRatings } = strainData
   const { rowIds } = cleanData
+  const dataIsLoading = !strainData
   const projects = profile.projects
   const currentIdx = projects ? projects.findIndex(item => item._id === currentProject ) : []
   const project = projects ? projects[currentIdx] : false
-  const data = project ? project.ratings : []
+  const ratings = project ? project.ratings : []
   const results = project ? project.results : false
   const handleTabChange = (e,i) => { setCurrentProjectTab(i) }
   const handleSubmit = e => { submitProject(currentProject) }
   const handleCellChange = (id, val)=>{ setRating(currentProject, id, val) }
   const handleCellClick = (e, rowId)=>{ toggleStrainDataModal(rowId) }
   return(
-    project &&
       <Slide in={ !!project } direction={ 'up' } mountOnEnter unmountOnExit>
         <Box>
           <Tabs value={ currentProjectTab } onChange={ handleTabChange } indicatorColor='primary' textColor='primary' variant='fullWidth' >
             <Tab label='Strains' { ...a11yProps(0) } />
-            <Tab label='Results' { ...a11yProps(1) } />
+            <Tab label='Custom' { ...a11yProps(1) } />
+            <Tab label='Results' { ...a11yProps(2) } />
           </Tabs>
           <SwipeableViews
             axis={ swipeAxis(currentProjectTab, previousProjectTab) }
@@ -141,8 +174,8 @@ const ProjectPanel = props => {
             <TabPanel index={ 0 } value={ currentProjectTab }>
               <Button color='primary' variant="contained" style={{width: '100%'}} onClick={ handleSubmit }> Submit </Button>
               <SmartTable
-                isLoading={ !data || !rowIds || !smartTableRatingsHeaders }
-                data={ data }
+                isLoading={ dataIsLoading }
+                data={ ratings }
                 headers={ smartTableRatingsHeaders }
                 rowIds={ rowIds }
                 limit={ 10 }
@@ -151,8 +184,12 @@ const ProjectPanel = props => {
                 cellClick={ handleCellClick }
               />
             </TabPanel>
+            <TabPanel index={ 1 } value={ currentProjectTab }>
+              <CustomSliderGroup features={ CUSTOM_FEATURES }/>
+            </TabPanel>
             <TabPanel index={ 2 } value={ currentProjectTab }>
-              { isLoading ? 
+              { 
+                results ? 
                   <CircularProgress /> : 
                   <ResultsBody results={ results } titles={{ dist: 'Dist', kmr: 'KMR' }}/>
               }
@@ -165,7 +202,7 @@ const ProjectPanel = props => {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    cookies: ownProps.cookies,
+    cookies: state.login.cookies,
     profile: state.user.profile,
     strainData: state.user.strainData,
     showProjectList: state.user.showProjectList,

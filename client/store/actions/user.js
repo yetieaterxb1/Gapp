@@ -32,11 +32,12 @@ const userActionCreator = {
   getProfile: () => {
     return (dispatch, getState) => {
       const { cookies } = getState().login
-      const JWToken = cookies.get('jwt')
+      const JWToken = cookies ? cookies.get('jwt') : null
       fetch(config.api.path.root + '/user/profile', {
         method: 'GET',
         headers: {
-          'authorization': JWToken
+          'authorization': JWToken,
+          'Content-Type': 'application/json'
         }
       }).then(res => res.json())
         .then(data => {
@@ -74,7 +75,7 @@ const userActionCreator = {
     return (dispatch, getState) => {
       const { cookies } = getState().login
       const { strainData } = getState().user
-      const JWToken = cookies.get('jwt')
+      const JWToken = cookies ? cookies.get('jwt') : null
       const ratings = strainData.smartTableRatings
       name = projectname.value || name
       dispatch({ type: CREATE_NEWPROJECT })
@@ -87,7 +88,8 @@ const userActionCreator = {
           ratings: ratings
         }),
         headers: {
-          'authorization': JWToken
+          'authorization': JWToken,
+          'Content-Type': 'application/json'
         }
       }).then(res => res.json())
         .then(data => {
@@ -109,6 +111,7 @@ const userActionCreator = {
         }),
         headers: {
           'authorization': JWToken,
+          'Content-Type': 'application/json'
         }
       }).then(res => res.json())
         .then((data) => {
@@ -143,15 +146,18 @@ const userActionCreator = {
   getAllStrains: () => {
     return (dispatch, getState) => {
       const { cookies } = getState().login
-      const JWToken = cookies.get('jwt')
+      console.log('getAllStrains cookies', cookies)
+      const JWToken = cookies ? cookies.get('jwt') : null
       fetch(config.api.path.root + '/api/strains', {
         method: 'GET',
         headers: {
-          'authorization': JWToken
+          'authorization': JWToken,
+          'Content-Type': 'application/json'
         }
       }).then(res => res.json())
         .then(function(data){
-          const { strains, message } = data
+          const message = data.message
+          const strains = data.data
           const strainData = new StrainData(strains)
           dispatch({ 
             type: GET_ALLSTRAINS,  
@@ -173,8 +179,8 @@ const userActionCreator = {
   },
   setRating: (proj, id, val) => {
     return (dispatch, getState) => {
-      const profile = getState().user.profile
-      dispatch({ type: SET_RATING, profile, proj, id, val })
+      const { profile, currentProject } = getState().user
+      dispatch({ type: SET_RATING, profile, proj, id, val, currentProject })
     }
   },
   submitProject: (id) => {
@@ -191,7 +197,10 @@ const userActionCreator = {
       fetch(config.api.path.root + '/api/predict', {
         method: 'POST',
         body: JSON.stringify({ model, project }),
-        headers: { 'authorization': JWToken }
+        headers: { 
+          'authorization': JWToken,
+          'Content-Type': 'application/json'
+        }
       }).then(res => res.json())
         .then(data => {
           dispatch({ 
@@ -200,7 +209,6 @@ const userActionCreator = {
             data: data.data 
           })
         })
-
       // DIST
       // fetch(config.api.path.root + '/api/predict', {
       //   method: 'POST',

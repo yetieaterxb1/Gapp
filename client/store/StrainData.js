@@ -164,8 +164,8 @@ export default class StrainData{
     strainData.forEach((row, n) => {
       const newRow = {}
       Object.keys(row).forEach((key, m) => {
+        const x = row[key]
         if(!columns.includes(key)){
-          const x = row[key]
           const xcr = colRanges[m]
           const mean = xcr.mean
           const max = xcr.max

@@ -41,21 +41,21 @@ function projectController(req, res, next){
       )
     }
     case 'delete': {
-      const userId = req.user._id
-      const projId = req.body.id
+      const user = req.user
+      const body = req.body
+      const userId = user._id
+      const projId = body.id
       if( !userId || !projId ) { return next() }
       return User.findOne( 
-        { _id: userId  }, 
-        function(err, user, n){
-          if(err || !user) return res.status(500).json({ message: 'Internal Server error.' })
+        { _id: userId },
+        (err, user) => {
+          if(err) return res.status(500).json({ message: 'Internal Server error.' })
+          if(!user) return res.status(409).json({ message: 'Project not found.' })
           user.projects.id(projId).remove()
-          user.save(function(err, doc){
-            if(!err){
-              const projects = doc.projects
-              res.status(200).send({ message: 'Success.', data: projects })
-            }else{
-              res.status(500).json({ message: 'Internal Server error.' })
-            }
+          user.save((err, doc) => {
+            const projects = doc.projects
+            if(!err && projects) return res.status(200).send({ message: 'Success.', data: projects })
+            res.status(500).json({ message: 'Internal Server error.' })
           })
         }
       )

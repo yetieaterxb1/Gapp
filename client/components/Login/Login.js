@@ -41,13 +41,15 @@ const Login = props => {
   } = props
 
   useEffect(()=>{
-    checkAuth()
-    setCookieProvider(cookies, true)
-  })[cookies, isAuthenticated]
+    console.log(props)
+    // setCookieProvider(cookies, true)
+    
+    // checkAuth()
+  }, [])
 
   const handleKeyPress = e => {
     if (e.key === 'Enter') {
-      this.props.submitLogin()
+      submitLogin()
     }
   }
 
@@ -85,8 +87,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    setCookieProvider: (provider) => {
-      dispatch(loginActionCreator.setCookieProvider(provider))
+    setCookieProvider: (provider, force) => {
+      dispatch(loginActionCreator.setCookieProvider(provider, force))
     },
     submitLogin: () => {
       dispatch(loginActionCreator.submitLogin())

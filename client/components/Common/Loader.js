@@ -8,7 +8,7 @@ const randomRingColors = () => {
 }
 const makeRings = (n, styles) => {
   const N = Array.from({length:n},(v,i)=>i+1)
-  return N.map(r => <div key={r} className={'ring ' + 'ring' + r} style={styles[n]}></div>)
+  return N.map(r => <div key={r} className={'ring ' + 'ring' + r} style={styles ? styles[n] : {}}></div>)
 }
 const WhirlpoolLoader = props => {
   return (
@@ -22,3 +22,4 @@ const WhirlpoolLoader = props => {
   )
 }
 
+export default WhirlpoolLoader

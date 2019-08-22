@@ -54,8 +54,9 @@ const loginActionCreator = {
           const { jwt, isAuthenticated, message } = data
           const isAuthed = isAuthenticated && jwt.success
           if(isAuthed){
-            cookies.set('jwt', jwt.token, { path: '/' })
-            setTimeout(() => {
+            cookies ? cookies.set('jwt', jwt.token, { path: '/' }) : null
+            console.log('submitLogin isAuthed: ', isAuthed)
+            setTimeout(() => {              
               dispatch({
                 type: LOGIN_SUCCESS,
                 isAuthenticated: isAuthed,
@@ -121,15 +122,19 @@ const loginActionCreator = {
   },
   checkAuth: () => {
     return (dispatch, getState) => {
-      const JWToken = getState().login.cookies.get('jwt', { path: '/' })
+      const { cookies } = getState().login
+      const JWToken = cookies ? cookies.get('jwt', { path: '/' }) : null
+      console.log('COOKIES checkAuth jwt', JWToken)
       !JWToken ?
         dispatch({ type: IS_AUTHED, isAuthenticated: false }) :
         fetch(config.api.path.root + '/user', {
           method: 'GET',
           headers: {
             'authorization': JWToken,
+            'Content-Type': 'application/json'
           }
         }).then(res => {
+          console.log('then checkAuth isAuthed', res.isAuthenticated)
           res.isAuthenticated ?
             dispatch({ type: IS_AUTHED, isAuthenticated: true }) :
             dispatch({ type: IS_AUTHED, isAuthenticated: false })

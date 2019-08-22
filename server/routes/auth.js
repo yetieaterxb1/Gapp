@@ -10,10 +10,15 @@ const router = express.Router()
 
 router.route('/login')
   .get(function(req, res){ res.redirect('/#/login') })
-  .post(
-    passport.authenticate('local', { session:false }), 
-    login
-  )
+  .post(passport.authenticate('local', { session:false }), login)
+
+router.route('/login/auth')
+  .get(passport.authenticate('jwt'), function(req, res){ 
+    const isAuthenticated = req.isAuthenticated 
+    if(!isAuthenticated) return res.status(401).json({ isAuthenticated })
+    return res.status(200).json({ isAuthed })
+  })
+  .post(passport.authenticate('local', { session:false }), login)
 
 router.route('/logout')
   .get(logout)
